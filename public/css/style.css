@@ -124,6 +124,26 @@ nav.bar{
   opacity:0.12; z-index:1;
 }
 
+.shoot-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:28px;
+  margin-top:48px;
+}
+.shoot-card{display:flex; flex-direction:column;}
+.shoot-photo{
+  width:100%;
+  aspect-ratio:4/5;
+  background-size:cover;
+  background-position:center;
+  background-color:var(--line);
+  margin-bottom:16px;
+}
+.shoot-card h3{font-size:17px; margin-bottom:6px;}
+.shoot-card p{font-size:14.5px; color:var(--muted);}
+@media (max-width:980px){ .shoot-grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:520px){ .shoot-grid{grid-template-columns:1fr;} }
+
 /* SECTION */
 section{padding:90px 0;}
 .section-alt{background:var(--bg-alt);}
