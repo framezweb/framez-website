@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Album — Framez</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .video-list{display:flex; flex-direction:column; gap:32px; margin-top:40px;}
+  .video-item iframe{width:100%; aspect-ratio:16/9; border:1px solid var(--line);}
+  .video-item h4{font-family:'Playfair Display', serif; font-size:18px; margin-top:12px; font-weight:500;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="bar wrap">
+    <a href="/" class="logo">FRAMEZ</a>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/videos.html" class="active">Films</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:40px;">
+  <div class="wrap">
+    <div class="eyebrow"><a href="/videos.html">&larr; ALL VIDEO ALBUMS</a></div>
+    <h1 class="serif" id="albumTitle" style="font-size:clamp(30px,5vw,48px);">Loading…</h1>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div id="lockGate" style="display:none;">
+      <div class="lock-gate">
+        <h2 class="serif">Protected Album</h2>
+        <p>Enter the password to view this video album.</p>
+        <input type="password" id="albumPassword" placeholder="Password">
+        <button class="btn btn-solid" style="width:100%; cursor:pointer;" id="unlockBtn">Unlock Album</button>
+        <p class="error" id="lockError">That password isn't right — try again.</p>
+      </div>
+    </div>
+
+    <div class="video-list" id="videoList"></div>
+    <p class="state-msg" id="stateMsg" style="display:none;"></p>
+  </div>
+</section>
+
+<footer class="site wrap">
+  <span>&copy; <span id="year"></span> Framez. All rights reserved.</span>
+  <span>Based in Sri Lanka</span>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var params = new URLSearchParams(window.location.search);
+  var albumId = params.get('id');
+  var titleEl = document.getElementById('albumTitle');
+  var listEl = document.getElementById('videoList');
+  var stateEl = document.getElementById('stateMsg');
+  var gateEl = document.getElementById('lockGate');
+  var errorEl = document.getElementById('lockError');
+
+  function showState(msg) {
+    stateEl.style.display = 'block';
+    stateEl.textContent = msg;
+  }
+
+  function loadAlbum(password) {
+    if (!albumId) {
+      titleEl.textContent = 'Album not found';
+      showState('No video album was specified.');
+      return;
+    }
+    var url = '/api/video-album?id=' + encodeURIComponent(albumId) + (password ? '&password=' + encodeURIComponent(password) : '');
+    fetch(url).then(function (r) {
+      if (r.status === 401) {
+        gateEl.style.display = 'block';
+        titleEl.textContent = 'Protected Album';
+        if (password) errorEl.style.display = 'block';
+        return null;
+      }
+      return r.json();
+    }).then(function (data) {
+      if (!data) return;
+      gateEl.style.display = 'none';
+      titleEl.textContent = data.title || 'Video Album';
+      if (!data.videos || !data.videos.length) {
+        showState('No videos in this album yet.');
+        return;
+      }
+      listEl.innerHTML = data.videos.map(function (v) {
+        return (
+          '<div class="video-item">' +
+            '<iframe src="' + v.embedUrl + '" title="' + (v.title || '') + '" allowfullscreen></iframe>' +
+            (v.title ? '<h4>' + v.title + '</h4>' : '') +
+          '</div>'
+        );
+      }).join('');
+    }).catch(function () {
+      showState('Couldn\'t load this video album right now.');
+    });
+  }
+
+  document.getElementById('unlockBtn').addEventListener('click', function () {
+    errorEl.style.display = 'none';
+    loadAlbum(document.getElementById('albumPassword').value);
+  });
+  document.getElementById('albumPassword').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('unlockBtn').click();
+  });
+
+  loadAlbum();
+</script>
+
+</body>
+</html>

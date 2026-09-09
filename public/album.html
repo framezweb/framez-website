@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Album — Framez</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="bar wrap">
+    <a href="/" class="logo">FRAMEZ</a>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html" class="active">Gallery</a>
+      <a href="/videos.html">Films</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:40px;">
+  <div class="wrap">
+    <div class="eyebrow"><a href="/gallery.html">&larr; ALL ALBUMS</a></div>
+    <h1 class="serif" id="albumTitle" style="font-size:clamp(30px,5vw,48px);">Loading…</h1>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div id="lockGate" style="display:none;">
+      <div class="lock-gate">
+        <h2 class="serif">Protected Album</h2>
+        <p>Enter the password to view this album.</p>
+        <input type="password" id="albumPassword" placeholder="Password">
+        <button class="btn btn-solid" style="width:100%; cursor:pointer;" id="unlockBtn">Unlock Album</button>
+        <p class="error" id="lockError">That password isn't right — try again.</p>
+      </div>
+    </div>
+
+    <div class="photo-grid" id="photoGrid"></div>
+    <p class="state-msg" id="stateMsg" style="display:none;"></p>
+  </div>
+</section>
+
+<footer class="site wrap">
+  <span>&copy; <span id="year"></span> Framez. All rights reserved.</span>
+  <span>Based in Sri Lanka</span>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var params = new URLSearchParams(window.location.search);
+  var albumId = params.get('id');
+  var titleEl = document.getElementById('albumTitle');
+  var gridEl = document.getElementById('photoGrid');
+  var stateEl = document.getElementById('stateMsg');
+  var gateEl = document.getElementById('lockGate');
+  var errorEl = document.getElementById('lockError');
+
+  function showState(msg) {
+    stateEl.style.display = 'block';
+    stateEl.textContent = msg;
+  }
+
+  function loadAlbum(password) {
+    if (!albumId) {
+      titleEl.textContent = 'Album not found';
+      showState('No album was specified.');
+      return;
+    }
+    var url = '/api/album-photos?id=' + encodeURIComponent(albumId) + (password ? '&password=' + encodeURIComponent(password) : '');
+    fetch(url).then(function (r) {
+      if (r.status === 401) {
+        gateEl.style.display = 'block';
+        titleEl.textContent = 'Protected Album';
+        if (password) errorEl.style.display = 'block';
+        return null;
+      }
+      return r.json();
+    }).then(function (data) {
+      if (!data) return;
+      gateEl.style.display = 'none';
+      titleEl.textContent = data.title || 'Album';
+      if (!data.photos || !data.photos.length) {
+        showState('No photos in this album yet.');
+        return;
+      }
+      gridEl.innerHTML = data.photos.map(function (p) {
+        return '<a href="' + p.full + '" target="_blank" rel="noopener"><img src="' + p.thumb + '" alt="' + p.name + '" loading="lazy"></a>';
+      }).join('');
+    }).catch(function () {
+      showState('Couldn\'t load this album right now.');
+    });
+  }
+
+  document.getElementById('unlockBtn').addEventListener('click', function () {
+    errorEl.style.display = 'none';
+    loadAlbum(document.getElementById('albumPassword').value);
+  });
+  document.getElementById('albumPassword').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('unlockBtn').click();
+  });
+
+  loadAlbum();
+</script>
+
+</body>
+</html>

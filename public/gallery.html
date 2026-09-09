@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Framez</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="bar wrap">
+    <a href="/" class="logo">FRAMEZ</a>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html" class="active">Gallery</a>
+      <a href="/videos.html">Films</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:60px;">
+  <div class="wrap">
+    <div class="eyebrow">SELECTED WORK</div>
+    <h1 class="serif" style="font-size:clamp(32px,5vw,52px);">Client Albums</h1>
+    <p>Every album here comes straight from our Drive — locked ones need a password to open.</p>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div class="album-grid" id="albumGrid">
+      <p class="state-msg">Loading albums…</p>
+    </div>
+  </div>
+</section>
+
+<footer class="site wrap">
+  <span>&copy; <span id="year"></span> Framez. All rights reserved.</span>
+  <span>Based in Sri Lanka</span>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  fetch('/api/albums')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var el = document.getElementById('albumGrid');
+      if (!data.albums || !data.albums.length) {
+        el.innerHTML = '<p class="state-msg">No albums yet — create a folder inside "Framez Albums" in Drive and it will show up here.</p>';
+        return;
+      }
+      el.innerHTML = data.albums.map(function (a) {
+        return (
+          '<a class="album-tile" href="/album.html?id=' + a.id + '">' +
+            '<div class="album-thumb">' +
+              (a.cover ? '<img src="' + a.cover + '" alt="' + a.title + '">' : '<span class="placeholder">No cover yet</span>') +
+              (a.locked ? '<span class="lock-badge">LOCKED</span>' : '') +
+            '</div>' +
+            '<div class="album-meta"><h4 class="serif">' + a.title + '</h4></div>' +
+          '</a>'
+        );
+      }).join('');
+    })
+    .catch(function (err) {
+      document.getElementById('albumGrid').innerHTML = '<p class="state-msg">Couldn\'t load albums. Make sure the site is connected to Google Drive (see the setup guide).</p>';
+    });
+</script>
+
+</body>
+</html>

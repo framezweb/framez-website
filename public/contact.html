@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Framez</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="bar wrap">
+    <a href="/" class="logo">FRAMEZ</a>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/videos.html">Films</a>
+      <a href="/contact.html" class="active">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:40px;">
+  <div class="wrap">
+    <div class="eyebrow">GET IN TOUCH</div>
+    <h1 class="serif" style="font-size:clamp(32px,5vw,52px);">Let's put your day on film.</h1>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div class="contact-grid">
+      <form name="framez-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="framez-contact">
+        <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required>
+        </div>
+        <div class="field">
+          <label for="date">Event date</label>
+          <input id="date" name="date" type="text" placeholder="e.g. 14 March 2027">
+        </div>
+        <div class="field">
+          <label for="msg">Tell us about the day</label>
+          <textarea id="msg" name="message" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-solid" style="cursor:pointer;">Send inquiry</button>
+      </form>
+      <div>
+        <div class="info-row"><span>Email</span><span>hello@framez.lk</span></div>
+        <div class="info-row"><span>Phone / WhatsApp</span><span>+94 7X XXX XXXX</span></div>
+        <div class="info-row"><span>Instagram</span><span>@framez</span></div>
+        <div class="info-row"><span>Based in</span><span>Sri Lanka</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site wrap">
+  <span>&copy; <span id="year"></span> Framez. All rights reserved.</span>
+  <span>Based in Sri Lanka</span>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

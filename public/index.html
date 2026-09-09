@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Framez — Photography &amp; Videography</title>
+<meta name="description" content="Framez is a photography and videography studio covering weddings, events, and portraits.">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="bar wrap">
+    <a href="/" class="logo">FRAMEZ</a>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/" class="active">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/videos.html">Films</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">PHOTOGRAPHY &amp; VIDEOGRAPHY STUDIO</div>
+    <h1 class="serif">Every moment, held in a <em>frame</em> worth keeping.</h1>
+    <p>Framez covers weddings, events, and portraits with a documentary eye — honest light, quiet observation, and edits that feel like the day actually did.</p>
+    <div class="actions">
+      <a href="/contact.html" class="btn btn-solid">Book a date</a>
+      <a href="/gallery.html" class="btn">View gallery</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">WHAT WE SHOOT</div>
+        <h2 class="title serif">Coverage built around your day.</h2>
+      </div>
+      <a href="/services.html" class="btn">All services</a>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="num">01</div>
+        <h3>Wedding coverage</h3>
+        <p>Full-day photo and film coverage, delivered as a clean edit and a highlight reel.</p>
+      </div>
+      <div class="card">
+        <div class="num">02</div>
+        <h3>Event &amp; concert</h3>
+        <p>Fast-moving coverage for live shows, launches, and gatherings.</p>
+      </div>
+      <div class="card">
+        <div class="num">03</div>
+        <h3>Portrait sessions</h3>
+        <p>One-on-one or small group sessions shot on location.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">RECENT ALBUMS</div>
+        <h2 class="title serif">A look at recent work.</h2>
+      </div>
+      <a href="/gallery.html" class="btn">View all albums</a>
+    </div>
+    <div class="album-grid" id="homeAlbums">
+      <p class="state-msg">Loading albums…</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt">
+  <div class="wrap" style="text-align:center;">
+    <h2 class="title serif" style="max-width:none; margin:0 auto;">Let's put your day on film.</h2>
+    <div class="actions" style="justify-content:center; margin-top:32px;">
+      <a href="/contact.html" class="btn btn-solid">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site wrap">
+  <span>&copy; <span id="year"></span> Framez. All rights reserved.</span>
+  <span>Based in Sri Lanka</span>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  fetch('/api/albums')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var el = document.getElementById('homeAlbums');
+      if (!data.albums || !data.albums.length) {
+        el.innerHTML = '<p class="state-msg">No albums yet — add a folder to your Framez Albums drive to see it here.</p>';
+        return;
+      }
+      var top = data.albums.slice(0, 3);
+      el.innerHTML = top.map(function (a) {
+        return (
+          '<a class="album-tile" href="/album.html?id=' + a.id + '">' +
+            '<div class="album-thumb">' +
+              (a.cover ? '<img src="' + a.cover + '" alt="' + a.title + '">' : '<span class="placeholder">No cover yet</span>') +
+              (a.locked ? '<span class="lock-badge">LOCKED</span>' : '') +
+            '</div>' +
+            '<div class="album-meta"><h4 class="serif">' + a.title + '</h4></div>' +
+          '</a>'
+        );
+      }).join('');
+    })
+    .catch(function () {
+      document.getElementById('homeAlbums').innerHTML = '<p class="state-msg">Albums will appear here once the site is connected to Google Drive.</p>';
+    });
+</script>
+
+</body>
+</html>

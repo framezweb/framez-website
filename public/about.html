@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Framez</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="bar wrap">
+    <a href="/" class="logo">FRAMEZ</a>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/about.html" class="active">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/videos.html">Films</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:60px;">
+  <div class="wrap">
+    <div class="eyebrow">ABOUT THE STUDIO</div>
+    <h1 class="serif" style="font-size:clamp(32px,5vw,52px);">Back behind the lens, with more to say.</h1>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <p style="color:var(--muted); font-size:16.5px;">Framez started as a way to shoot the events that actually mattered — weddings, gigs, launches — the kind of days people only get once. After a short break, the studio is back and taking on new clients.</p>
+        <p style="color:var(--muted); font-size:16.5px; margin-top:18px;">The approach hasn't changed: show up early, stay out of the way, and bring back a set of images and footage that feels like being there again.</p>
+      </div>
+      <blockquote class="serif" style="font-style:italic; font-size:22px; border-left:1px solid var(--line); padding-left:24px; line-height:1.4;">
+        "The best frame is the one nobody noticed being taken."
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<footer class="site wrap">
+  <span>&copy; <span id="year"></span> Framez. All rights reserved.</span>
+  <span>Based in Sri Lanka</span>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
