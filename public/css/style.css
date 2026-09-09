@@ -196,16 +196,25 @@ h2.title{font-size:clamp(28px,3.6vw,42px); font-weight:500; max-width:20ch;}
 .photo-grid img{width:100%; height:100%; object-fit:cover; transition:transform .3s ease;}
 .photo-grid a:hover img{transform:scale(1.03);}
 
-/* PORTFOLIO photo grid - natural aspect ratio, no cropping */
+/* PORTFOLIO photo grid - natural aspect ratio, no cropping, fixed reading order */
 .photo-grid.natural{
-  grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
-  align-items:start;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
 }
 .photo-grid.natural a{
-  aspect-ratio:auto; height:auto; background:none;
+  aspect-ratio:auto; background:none;
+  flex:1 1 260px;
+  max-width:calc(33.333% - 6px);
 }
 .photo-grid.natural img{
-  width:100%; height:auto; object-fit:contain;
+  width:100%; height:100%; object-fit:contain; display:block;
+}
+@media (max-width:760px){
+  .photo-grid.natural a{ max-width:calc(50% - 4px); }
+}
+@media (max-width:480px){
+  .photo-grid.natural a{ max-width:100%; }
 }
 
 /* LOCK GATE */
