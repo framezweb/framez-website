@@ -10,7 +10,7 @@
 
 <header class="site">
   <nav class="bar wrap">
-    <a href="/" class="logo"><img src="/assets/logo.svg" alt="Framez" class="logo-img"></a>
+    <a href="/" class="logo"><img src="/assets/logo.png" alt="Framez" class="logo-img"></a>
     <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     <div class="navlinks" id="navLinks">
       <a href="/">Home</a>
@@ -26,8 +26,7 @@
 <section class="hero" style="padding-bottom:40px;">
   <div class="wrap">
     <div class="eyebrow">SELECTED PHOTOGRAPHY</div>
-    <h1 class="serif" style="font-size:clamp(32px,5vw,52px);">Portfolio</h1>
-    <p>A curated set of favorites, grouped by the kind of day they came from.</p>
+    <h1 class="serif eyecatch" style="font-size:clamp(36px,6vw,58px);">Portfolio</h1>
   </div>
 </section>
 
@@ -64,7 +63,7 @@
 
       if (!categories.length) {
         state.style.display = 'block';
-        state.textContent = 'No portfolio photos yet — add subfolders (Events, School Events, Birthday, Portraits, Graduations) inside your "Framez Portfolio" Drive folder and drop photos into each.';
+        state.textContent = 'No portfolio photos yet — add subfolders (Events, School Events, Birthday, Graduation, Portraits) inside your "Framez Portfolio" Drive folder and drop photos into each.';
         return;
       }
 
@@ -74,7 +73,7 @@
         }).join('');
         return (
           '<div class="section-head" style="margin-top:56px;">' +
-            '<div><h2 class="title serif" style="font-size:26px;">' + cat.name + '</h2></div>' +
+            '<div><h2 class="title serif eyecatch" style="font-size:24px;">' + cat.name + '</h2></div>' +
           '</div>' +
           '<div class="photo-grid" style="margin-top:24px;">' + grid + '</div>'
         );
