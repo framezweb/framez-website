@@ -4,31 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Framez — Photography &amp; Videography</title>
-<meta name="description" content="Framez is a photography and videography studio covering weddings, events, and portraits.">
+<meta name="description" content="Framez is a photography and videography studio covering events, birthdays, graduations, and portraits.">
 <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
 <header class="site">
   <nav class="bar wrap">
-    <a href="/" class="logo">FRAMEZ</a>
+    <a href="/" class="logo"><img src="/assets/logo.svg" alt="Framez" class="logo-img"></a>
     <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     <div class="navlinks" id="navLinks">
       <a href="/" class="active">Home</a>
       <a href="/about.html">About</a>
-      <a href="/services.html">Services</a>
+      <a href="/portfolio.html">Portfolio</a>
       <a href="/gallery.html">Gallery</a>
-      <a href="/videos.html">Films</a>
+      <a href="/videos.html">Cinematography</a>
       <a href="/contact.html">Contact</a>
     </div>
   </nav>
 </header>
 
-<section class="hero">
+<section class="hero" id="heroSection">
+  <video class="hero-video-bg" id="heroVideo" autoplay muted loop playsinline>
+    <source src="/assets/hero.mp4" type="video/mp4">
+  </video>
+  <div class="hero-video-overlay" id="heroOverlay" style="display:none;"></div>
   <div class="wrap">
     <div class="eyebrow">PHOTOGRAPHY &amp; VIDEOGRAPHY STUDIO</div>
-    <h1 class="serif">Every moment, held in a <em>frame</em> worth keeping.</h1>
-    <p>Framez covers weddings, events, and portraits with a documentary eye — honest light, quiet observation, and edits that feel like the day actually did.</p>
+    <h1 class="serif">Framez captures your events, birthdays, graduations, portraits, and turns them into moments worth remembering.</h1>
     <div class="actions">
       <a href="/contact.html" class="btn btn-solid">Book a date</a>
       <a href="/gallery.html" class="btn">View gallery</a>
@@ -43,18 +46,18 @@
         <div class="kicker">WHAT WE SHOOT</div>
         <h2 class="title serif">Coverage built around your day.</h2>
       </div>
-      <a href="/services.html" class="btn">All services</a>
+      <a href="/portfolio.html" class="btn">View portfolio</a>
     </div>
     <div class="grid-3">
       <div class="card">
         <div class="num">01</div>
-        <h3>Wedding coverage</h3>
-        <p>Full-day photo and film coverage, delivered as a clean edit and a highlight reel.</p>
+        <h3>Events &amp; parties</h3>
+        <p>Full coverage for birthdays and get-togethers, delivered as a clean edit and a highlight reel.</p>
       </div>
       <div class="card">
         <div class="num">02</div>
-        <h3>Event &amp; concert</h3>
-        <p>Fast-moving coverage for live shows, launches, and gatherings.</p>
+        <h3>Graduations</h3>
+        <p>Coverage of the ceremony and the celebration after, built for sharing right away.</p>
       </div>
       <div class="card">
         <div class="num">03</div>
@@ -70,7 +73,7 @@
     <div class="section-head">
       <div>
         <div class="kicker">RECENT ALBUMS</div>
-        <h2 class="title serif">A look at recent work.</h2>
+        <h2 class="title serif">Recently framed.</h2>
       </div>
       <a href="/gallery.html" class="btn">View all albums</a>
     </div>
@@ -81,8 +84,48 @@
 </section>
 
 <section class="section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">CINEMATOGRAPHY</div>
+        <h2 class="title serif">Motion tells the rest of the story.</h2>
+      </div>
+      <a href="/videos.html" class="btn">View cinematography</a>
+    </div>
+    <div class="album-grid" id="homeVideos">
+      <p class="state-msg">Loading videos…</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">REVIEWS</div>
+        <h2 class="title serif">What clients say.</h2>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <p style="font-style:italic; color:var(--muted);">"Framez made the whole day feel effortless — the photos still get me."</p>
+        <h3 style="margin-top:16px; font-size:15px;">— Placeholder Client</h3>
+      </div>
+      <div class="card">
+        <p style="font-style:italic; color:var(--muted);">"Every shot felt natural, nothing posed. Exactly what we wanted."</p>
+        <h3 style="margin-top:16px; font-size:15px;">— Placeholder Client</h3>
+      </div>
+      <div class="card">
+        <p style="font-style:italic; color:var(--muted);">"Quick turnaround and the highlight reel was better than we imagined."</p>
+        <h3 style="margin-top:16px; font-size:15px;">— Placeholder Client</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt">
   <div class="wrap" style="text-align:center;">
-    <h2 class="title serif" style="max-width:none; margin:0 auto;">Let's put your day on film.</h2>
+    <h2 class="title serif" style="max-width:none; margin:0 auto;">Your next memorable moment starts here.</h2>
     <div class="actions" style="justify-content:center; margin-top:32px;">
       <a href="/contact.html" class="btn btn-solid">Get in touch</a>
     </div>
@@ -97,6 +140,17 @@
 <script src="/js/main.js"></script>
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  var heroVideo = document.getElementById('heroVideo');
+  var heroSection = document.getElementById('heroSection');
+  var heroOverlay = document.getElementById('heroOverlay');
+  heroVideo.addEventListener('loadeddata', function () {
+    heroSection.classList.add('has-video');
+    heroOverlay.style.display = 'block';
+  });
+  heroVideo.addEventListener('error', function () {
+    heroVideo.style.display = 'none';
+  });
 
   fetch('/api/albums')
     .then(function (r) { return r.json(); })
@@ -121,6 +175,31 @@
     })
     .catch(function () {
       document.getElementById('homeAlbums').innerHTML = '<p class="state-msg">Albums will appear here once the site is connected to Google Drive.</p>';
+    });
+
+  fetch('/api/videos')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var el = document.getElementById('homeVideos');
+      if (!data.albums || !data.albums.length) {
+        el.innerHTML = '<p class="state-msg">No video albums yet — add a folder to your Framez Videos drive to see it here.</p>';
+        return;
+      }
+      var top = data.albums.slice(0, 3);
+      el.innerHTML = top.map(function (a) {
+        return (
+          '<a class="album-tile" href="/video-album.html?id=' + a.id + '">' +
+            '<div class="album-thumb">' +
+              '<span class="placeholder">' + a.count + (a.count === 1 ? ' video' : ' videos') + '</span>' +
+              (a.locked ? '<span class="lock-badge">LOCKED</span>' : '') +
+            '</div>' +
+            '<div class="album-meta"><h4 class="serif">' + a.title + '</h4></div>' +
+          '</a>'
+        );
+      }).join('');
+    })
+    .catch(function () {
+      document.getElementById('homeVideos').innerHTML = '<p class="state-msg">Videos will appear here once the site is connected to Google Drive.</p>';
     });
 </script>
 

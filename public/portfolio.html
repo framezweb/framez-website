@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Framez</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site">
+  <nav class="bar wrap">
+    <a href="/" class="logo"><img src="/assets/logo.svg" alt="Framez" class="logo-img"></a>
+    <button class="navtoggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <div class="navlinks" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/portfolio.html" class="active">Portfolio</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/videos.html">Cinematography</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" style="padding-bottom:40px;">
+  <div class="wrap">
+    <div class="eyebrow">SELECTED PHOTOGRAPHY</div>
+    <h1 class="serif" style="font-size:clamp(32px,5vw,52px);">Portfolio</h1>
+    <p>A curated set of favorites, grouped by the kind of day they came from.</p>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div id="portfolioSections"></div>
+    <p class="state-msg" id="stateMsg" style="display:none;"></p>
+  </div>
+</section>
+
+<footer class="site wrap">
+  <span>&copy; <span id="year"></span> Framez. All rights reserved.</span>
+  <span>Based in Sri Lanka</span>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  fetch('/api/portfolio')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var wrap = document.getElementById('portfolioSections');
+      var state = document.getElementById('stateMsg');
+      var categories = (data.categories || []).filter(function (c) { return c.photos && c.photos.length; });
+
+      if (!categories.length) {
+        state.style.display = 'block';
+        state.textContent = 'No portfolio photos yet — add subfolders (Events, School Events, Birthday, Portraits, Graduations) inside your "Framez Portfolio" Drive folder and drop photos into each.';
+        return;
+      }
+
+      wrap.innerHTML = categories.map(function (cat) {
+        var grid = cat.photos.map(function (p) {
+          return '<a href="' + p.thumb + '" target="_blank" rel="noopener"><img src="' + p.thumb + '" alt="' + p.name + '" loading="lazy"></a>';
+        }).join('');
+        return (
+          '<div class="section-head" style="margin-top:56px;">' +
+            '<div><h2 class="title serif" style="font-size:26px;">' + cat.name + '</h2></div>' +
+          '</div>' +
+          '<div class="photo-grid" style="margin-top:24px;">' + grid + '</div>'
+        );
+      }).join('');
+    })
+    .catch(function () {
+      var state = document.getElementById('stateMsg');
+      state.style.display = 'block';
+      state.textContent = "Couldn't load the portfolio right now.";
+    });
+</script>
+
+</body>
+</html>
