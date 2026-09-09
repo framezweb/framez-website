@@ -194,3 +194,8 @@ footer.site{
   display:flex; justify-content:space-between; align-items:center;
   font-size:13px; color:var(--muted); flex-wrap:wrap; gap:12px;
 }
+.footer-right{display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+.social-icons{display:flex; align-items:center; gap:14px;}
+.social-icons a{color:var(--muted); transition:color .2s ease; display:flex;}
+.social-icons a:hover{color:var(--fg);}
+.social-icons svg{width:16px; height:16px; display:block; fill:currentColor;}
