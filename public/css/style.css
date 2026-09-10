@@ -175,7 +175,7 @@ h2.title{font-size:clamp(28px,3.6vw,42px); font-weight:500; max-width:20ch;}
   display:flex; align-items:center; justify-content:center;
   position:relative;
 }
-.album-thumb img{width:100%; height:100%; object-fit:cover;}
+.album-thumb img{width:100%; height:100%; object-fit:contain;}
 .album-thumb .placeholder{color:var(--muted); font-size:13px; letter-spacing:0.06em;}
 .album-thumb .lock-badge{
   position:absolute; top:12px; right:12px;
@@ -257,3 +257,44 @@ footer.site{
 .social-icons a{color:var(--muted); transition:color .2s ease; display:flex;}
 .social-icons a:hover{color:var(--fg);}
 .social-icons svg{width:16px; height:16px; display:block; fill:currentColor;}
+
+/* ALBUM HERO BANNER */
+.album-hero{
+  position:relative;
+  height:88vh; min-height:460px;
+  background-color:#111;
+  background-size:cover;
+  background-position:center;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:#fff; text-align:center;
+  transition:background-image .3s ease;
+}
+.album-hero-back{
+  position:absolute; top:28px; left:28px;
+}
+.album-hero-back a{color:#fff; opacity:.9;}
+.album-hero-back a:hover{opacity:1;}
+.album-hero-center{padding:0 24px;}
+.album-hero-title{
+  font-size:clamp(28px,5.2vw,54px);
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  font-weight:700;
+  text-shadow:0 2px 18px rgba(0,0,0,.35);
+}
+.album-hero-date{
+  margin-top:14px;
+  font-size:13.5px;
+  letter-spacing:0.12em;
+  color:rgba(255,255,255,.85);
+  display:none;
+}
+.album-hero-scroll{
+  position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+  font-size:26px; color:#fff; opacity:.85;
+  animation:albumScrollBounce 2s ease-in-out infinite;
+}
+@keyframes albumScrollBounce{
+  0%,100%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,8px);}
+}

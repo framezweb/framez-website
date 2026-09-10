@@ -23,11 +23,13 @@
   </nav>
 </header>
 
-<section class="hero" style="padding-bottom:40px;">
-  <div class="wrap">
-    <div class="eyebrow"><a href="/gallery.html">&larr; ALL ALBUMS</a></div>
-    <h1 class="serif" id="albumTitle" style="font-size:clamp(30px,5vw,48px);">Loading…</h1>
+<section class="album-hero" id="albumHero">
+  <div class="eyebrow album-hero-back"><a href="/gallery.html">&larr; ALL ALBUMS</a></div>
+  <div class="album-hero-center">
+    <h1 class="serif album-hero-title" id="albumTitle">Loading…</h1>
+    <p class="album-hero-date" id="albumDate"></p>
   </div>
+  <div class="album-hero-scroll">&#8964;</div>
 </section>
 
 <section style="padding-top:0;">
@@ -42,7 +44,7 @@
       </div>
     </div>
 
-    <div class="photo-grid" id="photoGrid"></div>
+    <div class="photo-grid natural" id="photoGrid"></div>
     <p class="state-msg" id="stateMsg" style="display:none;"></p>
   </div>
 </section>
@@ -67,6 +69,8 @@
   var params = new URLSearchParams(window.location.search);
   var albumId = params.get('id');
   var titleEl = document.getElementById('albumTitle');
+  var dateEl = document.getElementById('albumDate');
+  var heroEl = document.getElementById('albumHero');
   var gridEl = document.getElementById('photoGrid');
   var stateEl = document.getElementById('stateMsg');
   var gateEl = document.getElementById('lockGate');
@@ -96,6 +100,8 @@
       if (!data) return;
       gateEl.style.display = 'none';
       titleEl.textContent = data.title || 'Album';
+      if (data.banner) heroEl.style.backgroundImage = 'linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.45)), url(' + data.banner + ')';
+      if (data.date) { dateEl.textContent = data.date; dateEl.style.display = 'block'; }
       if (!data.photos || !data.photos.length) {
         showState('No photos in this album yet.');
         return;
