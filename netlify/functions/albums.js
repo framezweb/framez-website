@@ -30,13 +30,24 @@ exports.handler = async function () {
     for (const folder of foldersRes.data.files) {
       const meta = await readMeta(drive, folder.id).catch(() => ({}));
 
-      const imagesRes = await drive.files.list({
-        q: `'${folder.id}' in parents and mimeType contains 'image/' and trashed = false`,
-        fields: 'files(id)',
-        pageSize: 1,
-        orderBy: 'name',
-      });
-      const coverId = imagesRes.data.files[0] ? imagesRes.data.files[0].id : null;
+      let coverId = null;
+      if (meta.cover) {
+        const chosenRes = await drive.files.list({
+          q: `'${folder.id}' in parents and mimeType contains 'image/' and trashed = false and name = '${meta.cover.replace(/'/g, "\\'")}'`,
+          fields: 'files(id)',
+          pageSize: 1,
+        });
+        coverId = chosenRes.data.files[0] ? chosenRes.data.files[0].id : null;
+      }
+      if (!coverId) {
+        const imagesRes = await drive.files.list({
+          q: `'${folder.id}' in parents and mimeType contains 'image/' and trashed = false`,
+          fields: 'files(id)',
+          pageSize: 1,
+          orderBy: 'name',
+        });
+        coverId = imagesRes.data.files[0] ? imagesRes.data.files[0].id : null;
+      }
 
       albums.push({
         id: folder.id,

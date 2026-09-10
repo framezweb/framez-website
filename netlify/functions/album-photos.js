@@ -11,6 +11,16 @@ async function readMeta(drive, folderId) {
   return content.data || {};
 }
 
+async function findByName(drive, folderId, name) {
+  if (!name) return null;
+  const res = await drive.files.list({
+    q: `'${folderId}' in parents and mimeType contains 'image/' and trashed = false and name = '${name.replace(/'/g, "\\'")}'`,
+    fields: 'files(id)',
+    pageSize: 1,
+  });
+  return res.data.files[0] ? res.data.files[0].id : null;
+}
+
 exports.handler = async function (event) {
   try {
     const albumId = event.queryStringParameters && event.queryStringParameters.id;
@@ -46,10 +56,19 @@ exports.handler = async function (event) {
       full: directImageUrl(f.id),
     }));
 
+    let bannerId = await findByName(drive, albumId, meta.banner);
+    if (!bannerId) bannerId = await findByName(drive, albumId, meta.cover);
+    if (!bannerId && photosRes.data.files[0]) bannerId = photosRes.data.files[0].id;
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: meta.title || null, photos }),
+      body: JSON.stringify({
+        title: meta.title || null,
+        date: meta.date || null,
+        banner: bannerId ? directImageUrl(bannerId) : null,
+        photos,
+      }),
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
