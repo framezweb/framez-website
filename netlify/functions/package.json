@@ -1,0 +1,9 @@
+{
+  "name": "framez-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Framez photography & videography site — static front end + Netlify Functions that read albums from Google Drive.",
+  "dependencies": {
+    "googleapis": "^140.0.0"
+  }
+}
