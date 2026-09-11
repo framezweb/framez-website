@@ -63,7 +63,7 @@ exports.handler = async function (event) {
       body: JSON.stringify({
         title: meta.title || null,
         date: meta.date || null,
-        banner: bannerId ? directImageUrl(bannerId) : null,
+        banner: bannerId ? thumbnailUrl(bannerId, 1600) : null,
         photos,
       }),
     };
