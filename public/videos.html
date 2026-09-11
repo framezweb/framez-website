@@ -67,7 +67,9 @@
         return (
           '<a class="album-tile" href="/video-album.html?id=' + a.id + '">' +
             '<div class="album-thumb">' +
-              '<span class="placeholder">' + a.count + (a.count === 1 ? ' video' : ' videos') + '</span>' +
+              (a.cover
+                ? '<img src="' + a.cover + '" alt="' + a.title + '">'
+                : '<span class="placeholder">' + a.count + (a.count === 1 ? ' video' : ' videos') + '</span>') +
               (a.locked ? '<span class="lock-badge">LOCKED</span>' : '') +
             '</div>' +
             '<div class="album-meta"><h4 class="serif">' + a.title + '</h4></div>' +
