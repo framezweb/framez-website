@@ -1,4 +1,4 @@
-const { getDriveClient } = require('./utils/drive');
+const { getDriveClient, thumbnailUrl } = require('./utils/drive');
 
 async function readMeta(drive, folderId) {
   const res = await drive.files.list({
@@ -27,11 +27,24 @@ exports.handler = async function () {
     const albums = [];
     for (const folder of foldersRes.data.files) {
       const meta = await readMeta(drive, folder.id).catch(() => ({}));
+
+      let coverUrl = null;
+      if (meta.cover) {
+        const imagesRes = await drive.files.list({
+          q: `'${folder.id}' in parents and mimeType contains 'image/' and trashed = false`,
+          fields: 'files(id, name)',
+        });
+        const wanted = meta.cover.trim().toLowerCase();
+        const match = imagesRes.data.files.find((f) => f.name.toLowerCase() === wanted);
+        if (match) coverUrl = thumbnailUrl(match.id, 600);
+      }
+
       albums.push({
         id: folder.id,
         title: meta.title || folder.name,
         locked: !!meta.locked,
         count: Array.isArray(meta.videos) ? meta.videos.length : 0,
+        cover: coverUrl,
       });
     }
 
