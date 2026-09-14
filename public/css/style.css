@@ -200,6 +200,7 @@ h2.title{font-size:clamp(28px,3.6vw,42px); font-weight:500; max-width:20ch;}
 .photo-grid.natural{
   column-count:3;
   column-gap:8px;
+  column-fill:auto;
 }
 .photo-grid.natural a{
   aspect-ratio:auto; background:none;
