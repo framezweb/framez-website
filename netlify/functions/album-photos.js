@@ -40,22 +40,34 @@ exports.handler = async function (event) {
       }
     }
 
-    const photosRes = await drive.files.list({
-      q: `'${albumId}' in parents and mimeType contains 'image/' and trashed = false`,
-      fields: 'files(id, name)',
-      orderBy: 'name',
-    });
+    // Drive only returns one page of results at a time (up to 1000 with
+    // pageSize set), so we loop with pageToken until every photo in the
+    // folder has been collected -- otherwise albums over the page limit
+    // get silently cut off.
+    let allFiles = [];
+    let pageToken = null;
+    do {
+      const photosRes = await drive.files.list({
+        q: `'${albumId}' in parents and mimeType contains 'image/' and trashed = false`,
+        fields: 'nextPageToken, files(id, name)',
+        orderBy: 'name',
+        pageSize: 1000,
+        pageToken: pageToken || undefined,
+      });
+      allFiles = allFiles.concat(photosRes.data.files || []);
+      pageToken = photosRes.data.nextPageToken || null;
+    } while (pageToken);
 
-    const photos = photosRes.data.files.map((f) => ({
+    const photos = allFiles.map((f) => ({
       id: f.id,
       name: f.name,
       thumb: thumbnailUrl(f.id, 600),
       full: directImageUrl(f.id),
     }));
 
-    let bannerId = findByName(photosRes.data.files, meta.banner);
-    if (!bannerId) bannerId = findByName(photosRes.data.files, meta.cover);
-    if (!bannerId && photosRes.data.files[0]) bannerId = photosRes.data.files[0].id;
+    let bannerId = findByName(allFiles, meta.banner);
+    if (!bannerId) bannerId = findByName(allFiles, meta.cover);
+    if (!bannerId && allFiles[0]) bannerId = allFiles[0].id;
 
     return {
       statusCode: 200,

@@ -27,13 +27,23 @@ exports.handler = async function () {
       const folder = foldersByName[name.toLowerCase()];
       if (!folder) continue;
 
-      const photoRes = await drive.files.list({
-        q: `'${folder.id}' in parents and mimeType contains 'image/' and trashed = false`,
-        fields: 'files(id, name)',
-        orderBy: 'name',
-      });
+      // Loop through all pages so categories with more photos than one
+      // Drive page (up to 1000 at a time) don't get cut off.
+      let allPhotoFiles = [];
+      let pageToken = null;
+      do {
+        const photoRes = await drive.files.list({
+          q: `'${folder.id}' in parents and mimeType contains 'image/' and trashed = false`,
+          fields: 'nextPageToken, files(id, name)',
+          orderBy: 'name',
+          pageSize: 1000,
+          pageToken: pageToken || undefined,
+        });
+        allPhotoFiles = allPhotoFiles.concat(photoRes.data.files || []);
+        pageToken = photoRes.data.nextPageToken || null;
+      } while (pageToken);
 
-      const photos = photoRes.data.files.map((f) => ({
+      const photos = allPhotoFiles.map((f) => ({
         id: f.id,
         name: f.name,
         thumb: thumbnailUrl(f.id, 700),
