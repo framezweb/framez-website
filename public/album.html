@@ -109,6 +109,7 @@
       gridEl.innerHTML = data.photos.map(function (p) {
         return '<a href="' + p.full + '" target="_blank" rel="noopener"><img src="' + p.thumb + '" alt="' + p.name + '" loading="lazy"></a>';
       }).join('');
+      layoutMasonry(gridEl);
     }).catch(function () {
       showState('Couldn\'t load this album right now.');
     });

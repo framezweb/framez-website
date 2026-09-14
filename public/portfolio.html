@@ -78,6 +78,9 @@
           '<div class="photo-grid natural" style="margin-top:24px;">' + grid + '</div>'
         );
       }).join('');
+      wrap.querySelectorAll('.photo-grid.natural').forEach(function (grid) {
+        layoutMasonry(grid);
+      });
     })
     .catch(function () {
       var state = document.getElementById('stateMsg');
