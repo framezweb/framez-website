@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio — Framez</title>
+<title>Photography Portfolio: Events, Birthdays, Graduations &amp; Portraits | Framez</title>
+<meta name="description" content="See our photography portfolio from Sri Lanka: event photography, school events, birthday photography, 1st birthday, graduation and portrait photography.">
+<link rel="canonical" href="https://framez.lk/portfolio.html">
+<meta property="og:title" content="Photography Portfolio: Events, Birthdays, Graduations &amp; Portraits | Framez">
+<meta property="og:description" content="See our photography portfolio from Sri Lanka: event photography, school events, birthday photography, 1st birthday, graduation and portrait photography.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://framez.lk/portfolio.html">
+<meta property="og:site_name" content="Framez Photography">
 <link rel="stylesheet" href="/css/style.css">
-<link rel="icon" type="image/png" href="/favicon.png">
 </head>
 <body>
 
@@ -27,13 +33,40 @@
 <section class="hero" style="padding-bottom:40px;">
   <div class="wrap">
     <div class="eyebrow">SELECTED PHOTOGRAPHY</div>
-    <h1 class="serif eyecatch" style="font-size:clamp(36px,6vw,58px);">Portfolio</h1>
+    <h1 class="serif eyecatch" style="font-size:clamp(36px,6vw,58px);">Photography Portfolio</h1>
+    <p style="color:var(--muted); font-size:16.5px; max-width:640px; margin-top:20px;">A look at our photography and videography work in Sri Lanka, from event photography in Colombo to birthdays, graduations and portraits.</p>
   </div>
 </section>
 
 <section style="padding-top:0;">
   <div class="wrap">
-    <div id="portfolioSections"></div>
+    <div id="portfolioSections">
+<section class="pf-sec" data-cat="Events" style="margin-top:56px;">
+<h2 class="title serif eyecatch" style="font-size:24px;">Event Photography in Colombo</h2>
+<p style="color:var(--muted); font-size:16px; max-width:720px; margin-top:12px;">Looking for event photography in Colombo? We cover shows, concerts, corporate events and celebrations, and many other Sri Lanka events. Every photo is edited with care and delivered on time. We also offer event videography, with highlight videos that show the moments photos alone cannot.</p>
+<div class="photo-grid natural" style="margin-top:24px;"></div>
+</section>
+<section class="pf-sec" data-cat="School Events" style="margin-top:56px;">
+<h2 class="title serif eyecatch" style="font-size:24px;">School Events Photography</h2>
+<p style="color:var(--muted); font-size:16px; max-width:720px; margin-top:12px;">We cover school events across Sri Lanka, from annual days and sports meets to science days and concerts. Our photography and videography services capture every smile, performance and proud moment for students, teachers and parents.</p>
+<div class="photo-grid natural" style="margin-top:24px;"></div>
+</section>
+<section class="pf-sec" data-cat="Birthday" style="margin-top:56px;">
+<h2 class="title serif eyecatch" style="font-size:24px;">Birthday Photography and 1st Birthday Photography</h2>
+<p style="color:var(--muted); font-size:16px; max-width:720px; margin-top:12px;">Need photography for a birthday party? We capture the fun, the cake, the decorations and the happy faces, so your family has real memories to keep. Our 1st birthday photography is relaxed and natural. Ask us for birthday photography ideas that suit your theme.</p>
+<div class="photo-grid natural" style="margin-top:24px;"></div>
+</section>
+<section class="pf-sec" data-cat="Graduation" style="margin-top:56px;">
+<h2 class="title serif eyecatch" style="font-size:24px;">Graduation Photography</h2>
+<p style="color:var(--muted); font-size:16px; max-width:720px; margin-top:12px;">Celebrate your big day with graduation photography that feels proud and personal. We photograph solo portraits, family photos and group shots to mark the milestone.</p>
+<div class="photo-grid natural" style="margin-top:24px;"></div>
+</section>
+<section class="pf-sec" data-cat="Portraits" style="margin-top:56px;">
+<h2 class="title serif eyecatch" style="font-size:24px;">Portrait Photography</h2>
+<p style="color:var(--muted); font-size:16px; max-width:720px; margin-top:12px;">Our portrait photography is simple, clean and natural. From girl photography sessions to family and personal portraits, we help you look confident and comfortable in front of the camera.</p>
+<div class="photo-grid natural" style="margin-top:24px;"></div>
+</section>
+</div>
     <p class="state-msg" id="stateMsg" style="display:none;"></p>
   </div>
 </section>
@@ -58,35 +91,30 @@
   fetch('/api/portfolio')
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      var wrap = document.getElementById('portfolioSections');
+      var alts = {"Events": "Event photography in Colombo, Sri Lanka", "School Events": "School event photography in Sri Lanka", "Birthday": "Birthday party photography in Sri Lanka", "Graduation": "Graduation photography in Sri Lanka", "Portraits": "Portrait photography in Sri Lanka"};
       var state = document.getElementById('stateMsg');
-      var categories = (data.categories || []).filter(function (c) { return c.photos && c.photos.length; });
-
-      if (!categories.length) {
-        state.style.display = 'block';
-        state.textContent = 'No portfolio photos yet — add subfolders (Events, School Events, Birthday, Graduation, Portraits) inside your "Framez Portfolio" Drive folder and drop photos into each.';
-        return;
-      }
-
-      wrap.innerHTML = categories.map(function (cat) {
-        var grid = cat.photos.map(function (p) {
-          return '<a href="' + p.thumb + '" target="_blank" rel="noopener"><img src="' + p.thumb + '" alt="' + p.name + '" loading="lazy"></a>';
+      var cats = data.categories || [];
+      var any = false;
+      document.querySelectorAll('.pf-sec').forEach(function (sec) {
+        var name = sec.getAttribute('data-cat');
+        var cat = cats.filter(function (c) { return c.name === name && c.photos && c.photos.length; })[0];
+        if (!cat) { sec.style.display = 'none'; return; }
+        any = true;
+        var grid = sec.querySelector('.photo-grid');
+        grid.innerHTML = cat.photos.map(function (p, i) {
+          return '<a href="' + p.thumb + '" target="_blank" rel="noopener"><img src="' + p.thumb + '" alt="' + alts[name] + ' - Framez Photography (' + (i + 1) + ')" loading="lazy"></a>';
         }).join('');
-        return (
-          '<div class="section-head" style="margin-top:56px;">' +
-            '<div><h2 class="title serif eyecatch" style="font-size:24px;">' + cat.name + '</h2></div>' +
-          '</div>' +
-          '<div class="photo-grid natural" style="margin-top:24px;">' + grid + '</div>'
-        );
-      }).join('');
-      wrap.querySelectorAll('.photo-grid.natural').forEach(function (grid) {
         layoutMasonry(grid);
       });
+      if (!any) {
+        state.style.display = 'block';
+        state.textContent = 'No portfolio photos yet. Add subfolders (Events, School Events, Birthday, Graduation, Portraits) inside your "Framez Portfolio" Drive folder and drop photos into each.';
+      }
     })
     .catch(function () {
       var state = document.getElementById('stateMsg');
       state.style.display = 'block';
-      state.textContent = "Couldn't load the portfolio right now.";
+      state.textContent = "Couldn't load the portfolio photos right now.";
     });
 </script>
 
