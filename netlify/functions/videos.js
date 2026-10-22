@@ -21,7 +21,7 @@ exports.handler = async function () {
     const foldersRes = await drive.files.list({
       q: `'${rootId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
       fields: 'files(id, name)',
-      orderBy: 'name',
+      orderBy: 'createdTime desc',
     });
 
     const albums = [];
