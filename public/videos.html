@@ -34,9 +34,9 @@
 
 <section class="hero" style="padding-bottom:60px;">
   <div class="wrap">
-    <div class="eyebrow">AFTER MOVIES &amp; HIGHLIGHT REELS</div>
-    <h1 class="serif" style="font-size:clamp(32px,5vw,52px);">Event Videography &amp; Video Albums</h1>
-    <p style="color:var(--muted); font-size:16.5px; max-width:640px; margin-top:20px;">Our event videography turns your day into a short, exciting highlight video, from stage shows to full event coverage.</p>
+    <div class="eyebrow">AFTER MOVIES</div>
+    <h1 class="serif" style="font-size:clamp(32px,5vw,52px);">Video Albums</h1>
+    <p style="color:var(--muted); font-size:16.5px; max-width:640px; margin-top:20px;">Our videography turns your day into a short, exciting highlight video, from birthdays and graduations to stage shows and full event coverage.</p>
   </div>
 </section>
 
@@ -76,7 +76,7 @@
       el.innerHTML = data.albums.map(function (a) {
         return (
           '<a class="album-tile" href="/video-album.html?id=' + a.id + '">' +
-            '<div class="album-thumb">' +
+            '<div class="album-thumb video-thumb">' +
               (a.cover
                 ? '<img src="' + a.cover + '" alt="' + a.title + '">'
                 : '<span class="placeholder">' + a.count + (a.count === 1 ? ' video' : ' videos') + '</span>') +

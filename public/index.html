@@ -189,7 +189,7 @@
       el.innerHTML = top.map(function (a) {
         return (
           '<a class="album-tile" href="/video-album.html?id=' + a.id + '">' +
-            '<div class="album-thumb">' +
+            '<div class="album-thumb video-thumb">' +
               (a.cover
                 ? '<img src="' + a.cover + '" alt="' + a.title + '">'
                 : '<span class="placeholder">' + a.count + (a.count === 1 ? ' video' : ' videos') + '</span>') +
