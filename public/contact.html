@@ -41,26 +41,51 @@
 
 <section style="padding-top:0;">
   <div class="wrap">
-    <p style="color:var(--muted); font-size:16.5px; max-width:720px; margin:0 0 32px;">Planning an event, birthday, graduation or portrait session? Tell us about it and we will send a free quote. Event photography prices in Sri Lanka depend on the event time, the number of photographers and the video editing, so message us your date and details.</p>
+    <p style="color:var(--muted); font-size:16.5px; max-width:720px; margin:0 0 16px;">Planning an event, birthday, graduation or portrait session? Tell us about it and we will send a free quote.</p>
+    <p style="color:var(--fg); font-size:17px; font-weight:700; max-width:720px; margin:0 0 32px;">Fill in the form below to book us now</p>
     <div class="contact-grid">
       <form name="framez-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="framez-contact">
         <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
         <div class="field">
-          <label for="name">Name</label>
-          <input id="name" name="name" type="text" required>
+          <label for="client_name">Client name</label>
+          <input id="client_name" name="client_name" type="text" required>
         </div>
         <div class="field">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" required>
+          <label for="event_name">Event name</label>
+          <input id="event_name" name="event_name" type="text" required>
         </div>
         <div class="field">
-          <label for="date">Event date</label>
-          <input id="date" name="date" type="text" placeholder="e.g. 14 March 2027">
+          <label for="date">Date</label>
+          <input id="date" name="date" type="text" placeholder="e.g. 14th March 2027" required>
         </div>
         <div class="field">
-          <label for="msg">Tell us about the day</label>
-          <textarea id="msg" name="message" rows="4"></textarea>
+          <label for="location">Location</label>
+          <input id="location" name="location" type="text" required>
+        </div>
+        <div class="field">
+          <label for="duration">Event time duration</label>
+          <input id="duration" name="time_duration" type="text" placeholder="e.g. 2.00 pm - 5.00 pm" required>
+        </div>
+        <div class="field">
+          <label for="contact1">Contact details 1 (name and phone number)</label>
+          <input id="contact1" name="contact_1" type="text" placeholder="e.g. Name - +94 7X XXX XXXX" required>
+        </div>
+        <div class="field">
+          <label for="contact2">Contact details 2 (name and phone number)</label>
+          <input id="contact2" name="contact_2" type="text" placeholder="e.g. Name - +94 7X XXX XXXX" required>
+        </div>
+        <div class="field">
+          <label for="photographers">How many photographers needed (optional)</label>
+          <input id="photographers" name="photographers_needed" type="text">
+        </div>
+        <div class="field">
+          <label for="videographers">How many videographers needed (optional)</label>
+          <input id="videographers" name="videographers_needed" type="text">
+        </div>
+        <div class="field">
+          <label for="msg">Special requests (optional)</label>
+          <textarea id="msg" name="special_requests" rows="4"></textarea>
         </div>
         <button type="submit" class="btn btn-solid" style="cursor:pointer;">Send inquiry</button>
       </form>
