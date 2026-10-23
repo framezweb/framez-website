@@ -44,12 +44,14 @@
     <p style="color:var(--muted); font-size:16.5px; max-width:720px; margin:0 0 16px;">Planning an event, birthday, graduation or portrait session? Tell us about it and we will send a free quote.</p>
     <p style="color:var(--fg); font-size:17px; font-weight:700; max-width:720px; margin:0 0 32px;">Fill in the form below to book us now</p>
     <div class="contact-grid">
-      <form name="framez-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="framez-contact">
-        <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+      <form id="framez-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="3eaecdc9-f23b-4f1c-b3c7-a653d8c0cbbf">
+        <input type="hidden" name="subject" value="New Framez booking inquiry">
+        <input type="hidden" name="from_name" value="Framez Website">
+        <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
         <div class="field">
           <label for="client_name">Client name</label>
-          <input id="client_name" name="client_name" type="text" required>
+          <input id="client_name" name="name" type="text" required>
         </div>
         <div class="field">
           <label for="event_name">Event name</label>
@@ -76,6 +78,10 @@
           <input id="contact2" name="contact_2" type="text" placeholder="e.g. Name - +94 7X XXX XXXX" required>
         </div>
         <div class="field">
+          <label for="client_email">Client email</label>
+          <input id="client_email" name="email" type="email" required>
+        </div>
+        <div class="field">
           <label for="photographers">How many photographers needed (optional)</label>
           <input id="photographers" name="photographers_needed" type="text">
         </div>
@@ -88,6 +94,7 @@
           <textarea id="msg" name="special_requests" rows="4"></textarea>
         </div>
         <button type="submit" class="btn btn-solid" style="cursor:pointer;">Send inquiry</button>
+        <p id="form-status" style="margin-top:18px; font-size:15px; color:var(--muted);"></p>
       </form>
       <div>
         <div class="info-row"><span>Email</span><span>methuja@framez.lk</span></div>
@@ -113,6 +120,36 @@
 </footer>
 
 <script src="/js/main.js"></script>
+<script>
+(function(){
+  var form = document.getElementById('framez-form');
+  var status = document.getElementById('form-status');
+  if(!form) return;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true; btn.textContent = 'Sending...';
+    status.textContent = '';
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if(data && data.success){
+        form.reset();
+        status.textContent = 'Thank you! We received your inquiry and will contact you soon.';
+        btn.textContent = 'Sent';
+      } else {
+        throw new Error('fail');
+      }
+    }).catch(function(){
+      status.textContent = 'Sorry, something went wrong. Please message us on WhatsApp or try again.';
+      btn.disabled = false; btn.textContent = 'Send inquiry';
+    });
+  });
+})();
+</script>
+
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
