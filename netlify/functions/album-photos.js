@@ -61,7 +61,7 @@ exports.handler = async function (event) {
     const photos = allFiles.map((f) => ({
       id: f.id,
       name: f.name,
-      thumb: thumbnailUrl(f.id, 600),
+      thumb: '/api/image?id=' + f.id + '&w=600&album=' + encodeURIComponent(albumId) + (suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : ''),
       full: directImageUrl(f.id),
     }));
 
@@ -75,7 +75,7 @@ exports.handler = async function (event) {
       body: JSON.stringify({
         title: meta.title || null,
         date: meta.date || null,
-        banner: bannerId ? thumbnailUrl(bannerId, 1600) : null,
+        banner: bannerId ? '/api/image?id=' + bannerId + '&w=1600&album=' + encodeURIComponent(albumId) + (suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : '') : null,
         photos,
       }),
     };
