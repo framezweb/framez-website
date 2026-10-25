@@ -77,9 +77,14 @@ function layoutMasonry(container) {
     if (loaded === total) run();
   }
 
-  window.addEventListener('resize', function () {
+  // Remove the previous resize listener for this container (the album page
+  // re-runs the layout when switching tabs), so they don't pile up.
+  if (container._masonryResize) window.removeEventListener('resize', container._masonryResize);
+  var onResize = function () {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(run, 150);
-  });
+  };
+  container._masonryResize = onResize;
+  window.addEventListener('resize', onResize);
 }
 window.layoutMasonry = layoutMasonry;
