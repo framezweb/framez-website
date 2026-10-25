@@ -1,4 +1,4 @@
-const { getDriveClient, directImageUrl, thumbnailUrl } = require('./utils/drive');
+const { getDriveClient, directImageUrl, downloadUrl, toDirectDownload, thumbnailUrl } = require('./utils/drive');
 
 async function readMeta(drive, folderId) {
   const res = await drive.files.list({
@@ -58,11 +58,14 @@ exports.handler = async function (event) {
       pageToken = photosRes.data.nextPageToken || null;
     } while (pageToken);
 
+    const pwPart = suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : '';
     const photos = allFiles.map((f) => ({
       id: f.id,
       name: f.name,
-      thumb: '/api/image?id=' + f.id + '&w=600&album=' + encodeURIComponent(albumId) + (suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : ''),
+      thumb: '/api/image?id=' + f.id + '&w=600&album=' + encodeURIComponent(albumId) + pwPart,
+      large: '/api/image?id=' + f.id + '&w=1600&album=' + encodeURIComponent(albumId) + pwPart,
       full: directImageUrl(f.id),
+      download: downloadUrl(f.id),
     }));
 
     let bannerId = findByName(allFiles, meta.banner);
@@ -75,6 +78,7 @@ exports.handler = async function (event) {
       body: JSON.stringify({
         title: meta.title || null,
         date: meta.date || null,
+        zipLink: toDirectDownload(meta.zipLink),
         banner: bannerId ? '/api/image?id=' + bannerId + '&w=1600&album=' + encodeURIComponent(albumId) + (suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : '') : null,
         photos,
       }),
