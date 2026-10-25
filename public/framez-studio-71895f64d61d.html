@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Framez Quotes</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;color:#111}
+.wrap{max-width:560px;margin:0 auto;padding:18px}h1{font-size:20px;margin:6px 0 16px}
+input,select,textarea,button{font:inherit}input,select,textarea{width:100%;padding:11px;border:1px solid #cfd3d9;border-radius:8px;background:#fff;margin-bottom:10px}
+textarea{min-height:90px}label{display:block;font-size:12.5px;color:#555;margin:2px 0 4px}
+.btn{padding:12px 16px;border:none;border-radius:8px;background:#111;color:#fff;cursor:pointer;margin:0 8px 8px 0}
+.btn.alt{background:#fff;color:#111;border:1px solid #cfd3d9}.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px}
+.row{display:flex;gap:10px}.row>*{flex:1}.sec{display:none}.on+.sec,.sec.show{display:block}
+.tg{display:flex;align-items:center;gap:10px;font-weight:bold;margin-bottom:8px}.tg input{width:auto;margin:0}
+.item{padding:13px;border-bottom:1px solid #eee;cursor:pointer}.item small{color:#666;display:block}.badge{float:right;font-size:12px;background:#e8f0fe;padding:2px 8px;border-radius:10px}.badge.inv{background:#e6f4ea}
+.info{background:#fff8e1;padding:10px;border-radius:8px;font-size:13px;margin-bottom:12px;white-space:pre-wrap}
+#sheetBar{position:sticky;top:0;background:#f3f4f6;padding:10px 14px;z-index:5}
+#sheetWrap{width:794px;margin:0 auto}
+#sheet{width:794px;min-height:1123px;background:#fff;padding:50px 56px;position:relative;font-size:14px;color:#000}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:9px solid #5b8fd9;padding-bottom:16px}
+.hd b{color:#5b8fd9;font-size:19px}.hd img{height:46px}.ttl{text-align:center;color:#4a86d6;font-size:25px;font-weight:bold;margin:34px 0 8px}
+.meta{text-align:right;margin-bottom:14px}.meta span{display:inline-block;width:80px;text-align:left}
+.two{display:flex;gap:46px}.two>div{flex:1}.bar{background:#7ea6de;font-weight:bold;padding:3px 6px;margin-bottom:6px}
+.tbl{margin-top:26px}.tbl .th{display:flex;background:#7ea6de;font-weight:bold;padding:5px 12px}.tbl .th span:first-child,.tbl .r div:first-child{flex:1}
+.r{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:2px solid #000}.r big{font-size:18px;display:block}.r small{display:block;font-size:12.5px;line-height:1.5}
+.pr{width:170px;text-align:left;font-size:18px}.tot{width:300px;margin-left:auto}.tot div{display:flex;justify-content:space-between;border-bottom:2px solid #000;padding:5px 0;font-weight:bold;font-size:17px}
+.tot div span:last-child{font-weight:normal;width:140px}.note{margin:12px 0 14px}.note b{font-size:17px}.note ul,.terms ul{margin:4px 0;padding-left:20px}.note li,.terms li{font-size:13px;margin:3px 0}
+.terms{position:relative;border:1px solid #000;border-radius:30px 0 30px 30px;padding:12px 24px}.terms h3{text-align:center;font-weight:normal;font-size:18px;margin:2px 0 6px}
+.bank{position:relative;margin:18px 26px 0;font-size:13.5px;height:120px}.bank img.sg{position:absolute;right:20px;top:-6px;width:200px}
+.seal{position:absolute;right:-62px;top:-66px;width:190px}.ty{text-align:center;font-weight:bold;margin-top:6px}
+@media print{body{background:#fff}.no-print{display:none!important}#sheetWrap{zoom:1!important;width:auto}@page{size:A4;margin:0}#sheet{min-height:0}}
+</style></head><body>
+
+<div id="login" class="wrap"><h1>Framez Quotes</h1><div class="card"><label>Password</label><input id="pw" type="password"><button class="btn" id="loginBtn">Open</button><div id="loginErr" style="color:#b00"></div></div></div>
+
+<div id="listView" class="wrap no-print" hidden>
+ <h1>Quotes &amp; Invoices</h1>
+ <button class="btn" id="newBtn">+ New quotation</button><button class="btn alt" id="outBtn">Log out</button>
+ <input id="search" placeholder="Search by number, client or event">
+ <div class="card" id="list"></div>
+</div>
+
+<div id="editView" class="wrap no-print" hidden>
+ <button class="btn alt" id="backBtn">&larr; Back</button>
+ <div class="info" id="clientInfo"></div>
+ <div class="card">
+  <label>Heading word (clear it for just QUOTE)</label><input id="f_title" value="Event">
+  <div class="row"><div><label>Number</label><input id="f_number"></div><div><label>Date</label><input id="f_date" type="date"></div></div>
+  <label>Prepared-by date</label><input id="f_prep" type="date">
+ </div>
+ <div class="card"><b>Prepared for</b><br><br>
+  <label>Event name</label><input id="f_event"><label>Location</label><input id="f_loc">
+  <div class="row"><div><label>Date</label><input id="f_edate"></div><div><label>Time</label><input id="f_time"></div></div>
+ </div>
+ <div class="card"><label class="tg"><input type="checkbox" id="p_on"> Photography</label><div class="sec">
+  <div class="row"><div><label>Photographers</label><select id="p_n"><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div><label>Price (Rs.)</label><input id="p_price" type="number" inputmode="numeric"></div></div></div></div>
+ <div class="card"><label class="tg"><input type="checkbox" id="v_on"> Videography</label><div class="sec">
+  <div class="row"><div><label>Video cameras</label><select id="v_n"><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div><label>Price (Rs.)</label><input id="v_price" type="number" inputmode="numeric"></div></div></div></div>
+ <div class="card"><label class="tg"><input type="checkbox" id="t_on"> Travelling cost</label><div class="sec"><label>Amount (Rs.)</label><input id="t_amt" type="number" inputmode="numeric"></div>
+  <label class="tg"><input type="checkbox" id="d_on"> Discount</label><div class="sec"><label>Amount (Rs.)</label><input id="d_amt" type="number" inputmode="numeric"></div>
+  <b id="totalLine"></b></div>
+ <div class="card"><label>Notes (one line each)</label><textarea id="f_notes"></textarea><label>Terms &amp; Conditions (one line each)</label><textarea id="f_terms" style="min-height:150px"></textarea></div>
+ <button class="btn" id="saveBtn">Save</button><button class="btn alt" id="viewQ">View / Print quotation</button>
+ <button class="btn" id="mkInv" hidden>Make invoice</button><button class="btn alt" id="viewI" hidden>View / Print invoice</button>
+ <div id="msg" style="margin:6px 0 30px;color:#0a7"></div>
+</div>
+
+<div id="sheetView" hidden>
+ <div id="sheetBar" class="no-print"><button class="btn alt" id="sBack">&larr; Back</button><button class="btn" id="sPrint">Print / Save as PDF</button></div>
+ <div id="sheetWrap"><div id="sheet"></div></div>
+</div>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var pw=sessionStorage.getItem('fz_pw')||'', cur=null, saved=false;
+var NOTES="Printed products, digital files are SOLD SEPARATELY\nFor every extra hour will be charge Rs.2500 per each Photographer & Videographer";
+var TERMS="Quotation is valid only for one month of period.\nAny requests that were not noted on this quote may incur an additional charge.\nClients must pay a non-refundable fee of 50% at least 3 days prior to the photoshoot.\nSpecial requirements must be informed before or on the event day.\nProtected album requests must be made before or on the event day.\nSpecial video requests (like a full dance recording) must be informed before the event.";
+function show(v){['login','listView','editView','sheetView'].forEach(function(x){$(x).hidden=(x!==v)});window.scrollTo(0,0)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function money(n){return 'Rs. '+Number(n||0).toLocaleString('en-US')}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dmy(i){var p=(i||'').split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:''}
+function longD(i){return i?new Date(i+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'2-digit',year:'numeric'}):''}
+function api(m,qs,body){return fetch('/api/quotes'+(qs||''),{method:m,headers:{'x-admin-password':pw,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}).then(function(r){return r.json().then(function(d){if(r.status===401||r.status===429){sessionStorage.removeItem('fz_pw');pw='';$('loginErr').textContent=d.error||'';show('login');throw new Error('auth')}return d})})}
+
+/* login + list */
+$('loginBtn').onclick=function(){pw=$('pw').value;sessionStorage.setItem('fz_pw',pw);$('loginErr').textContent='';loadList()};
+$('pw').onkeydown=function(e){if(e.key==='Enter')$('loginBtn').click()};
+$('outBtn').onclick=function(){sessionStorage.removeItem('fz_pw');pw='';show('login')};
+var all=[],nextNo='00501',SIG='';
+function loadList(){api('GET').then(function(d){if(d.error){$('loginErr').textContent=d.error;show('login');return}all=d.list;nextNo=d.next;api('GET','?asset=signature').then(function(x){SIG=x.data||''});
+ if(location.hash.indexOf('#new')===0){newDoc(parseHash());history.replaceState(null,'',location.pathname);return}
+ renderList();show('listView')}).catch(function(e){if(e.message!=='auth'){$('loginErr').textContent='Could not load. Check the site is deployed.';show('login')}})}
+function renderList(){var q=$('search').value.toLowerCase(),h='';all.filter(function(d){return (d.number+' '+(d.client||'')+' '+(d.event||'')).toLowerCase().indexOf(q)>-1}).forEach(function(d){
+ h+='<div class="item" data-n="'+d.number+'"><span class="badge'+(d.invoiced?' inv':'')+'">'+(d.invoiced?'Invoiced':'Quote')+'</span><b>#'+d.number+'</b> '+esc(d.client||'')+'<small>'+esc(d.event||'')+' · '+dmy(d.date)+' · '+money(d.total)+'</small></div>'});
+ $('list').innerHTML=h||'<small>No quotes yet.</small>'}
+$('search').oninput=renderList;
+$('list').onclick=function(e){var it=e.target.closest('.item');if(!it)return;api('GET','?number='+it.dataset.n).then(function(d){openDoc(d,true)})};
+$('newBtn').onclick=function(){newDoc({})};
+
+/* editor */
+function parseHash(){var p=new URLSearchParams(location.hash.slice(1));return{client:p.get('name')||'',event:p.get('event_name')||'',date:p.get('date')||'',loc:p.get('location')||'',time:p.get('time_duration')||'',ph:parseInt(p.get('photographers_needed'))||0,vi:parseInt(p.get('videographers_needed'))||0}}
+function newDoc(h){openDoc({number:nextNo,title:'Event',date:today(),prep:today(),client:h.client||'',forLines:[h.event||'',h.loc||'',h.date||'',h.time||''],
+ photo:{on:h.ph>0,count:h.ph||1,price:''},video:{on:h.vi>0,count:h.vi||1,price:''},travel:{on:false,amount:''},discount:{on:false,amount:''},notes:NOTES,terms:TERMS},false)}
+function tog(id){var c=$(id);c.parentNode.nextElementSibling.classList.toggle('show',c.checked)}
+['p_on','v_on','t_on','d_on'].forEach(function(id){$(id).onchange=function(){tog(id);calc()}});
+['p_price','v_price','t_amt','d_amt'].forEach(function(id){$(id).oninput=calc});
+function openDoc(d,isSaved){cur=d;saved=isSaved;var f=d.forLines||['','','',''];
+ $('f_title').value=d.title==null?'Event':d.title;$('f_number').value=d.number;$('f_date').value=d.date;$('f_prep').value=d.prep||d.date;
+ $('f_event').value=f[0];$('f_loc').value=f[1];$('f_edate').value=f[2];$('f_time').value=f[3];
+ $('p_on').checked=d.photo.on;$('p_n').value=d.photo.count;$('p_price').value=d.photo.price;
+ $('v_on').checked=d.video.on;$('v_n').value=d.video.count;$('v_price').value=d.video.price;
+ $('t_on').checked=d.travel.on;$('t_amt').value=d.travel.amount;$('d_on').checked=d.discount.on;$('d_amt').value=d.discount.amount;
+ ['p_on','v_on','t_on','d_on'].forEach(tog);$('f_notes').value=d.notes;$('f_terms').value=d.terms;
+ $('clientInfo').textContent=d.client?'Client: '+d.client:'';$('clientInfo').style.display=d.client?'block':'none';
+ $('mkInv').hidden=!isSaved||!!d.invoiced;$('viewI').hidden=!d.invoiced;$('msg').textContent='';calc();show('editView')}
+function read(){var n=function(id){return parseFloat($(id).value)||0};
+ var d={client:cur.client,invoiced:cur.invoiced,invoiceDate:cur.invoiceDate,title:$('f_title').value.trim(),number:$('f_number').value,date:$('f_date').value||today(),prep:$('f_prep').value||$('f_date').value||today(),
+ forLines:[$('f_event').value,$('f_loc').value,$('f_edate').value,$('f_time').value],
+ photo:{on:$('p_on').checked,count:+$('p_n').value,price:n('p_price')},video:{on:$('v_on').checked,count:+$('v_n').value,price:n('v_price')},
+ travel:{on:$('t_on').checked,amount:n('t_amt')},discount:{on:$('d_on').checked,amount:n('d_amt')},notes:$('f_notes').value,terms:$('f_terms').value};
+ var sub=(d.photo.on?d.photo.price:0)+(d.video.on?d.video.price:0)+(d.travel.on?d.travel.amount:0);d.sub=sub;d.total=sub-(d.discount.on?d.discount.amount:0);return d}
+function calc(){$('totalLine').textContent='Total: '+money(read().total)}
+function save(){var d=read();return api('POST','',{doc:d}).then(function(r){if(r.error){$('msg').textContent=r.error;throw 0}d.number=r.number;cur=d;saved=true;$('f_number').value=r.number;$('mkInv').hidden=!!d.invoiced;$('msg').textContent='Saved as #'+r.number;return d})}
+$('saveBtn').onclick=function(){save().catch(function(){})};
+$('backBtn').onclick=function(){loadList()};
+$('viewQ').onclick=function(){save().then(function(d){sheet(d,false)}).catch(function(){})};
+$('viewI').onclick=function(){save().then(function(d){sheet(d,true)}).catch(function(){})};
+$('mkInv').onclick=function(){if(!confirm('Make an invoice from this quotation?'))return;cur=read();cur.invoiced=true;cur.invoiceDate=today();$('f_number').value=cur.number;
+ api('POST','',{doc:cur}).then(function(r){cur.number=r.number;$('viewI').hidden=false;$('mkInv').hidden=true;sheet(cur,true)})};
+
+/* printable sheet */
+function plural(n,w){return n+' '+w+(n>1?'s':'')}
+function sheet(d,inv){var f=d.forLines,rows='',w=(d.title?d.title.toUpperCase()+' ':'');
+ if(d.photo.on)rows+='<div class="r"><div><big>Photography</big><small>'+plural(d.photo.count,'Photographer')+'<br>Full event coverage<br>Professionally Edited Softcopies</small></div><div class="pr">'+money(d.photo.price)+'</div></div>';
+ if(d.video.on)rows+='<div class="r"><div><big>Videography</big><small>4K High Resolution Video<br>Edited Video<br>'+plural(d.video.count,'Video Camera')+'</small></div><div class="pr">'+money(d.video.price)+'</div></div>';
+ if(d.travel.on)rows+='<div class="r"><div><big>Travelling Cost</big></div><div class="pr">'+money(d.travel.amount)+'</div></div>';
+ var tot='<div class="tot">'+(d.discount.on?'<div><span>Sub Total</span><span>'+money(d.sub)+'</span></div><div><span>Discount</span><span>'+money(d.discount.amount)+'</span></div>':'')+'<div><span>Total</span><span>'+money(d.total)+'</span></div></div>';
+ var li=function(t){return '<ul>'+t.split('\n').filter(Boolean).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'};
+ $('sheet').innerHTML='<div class="hd"><div><b>FRAMEZ</b><br>methuja@framez.lk<br>0769644887</div><img src="/assets/logo.png" alt="FRAMEZ"></div>'+
+ '<div class="ttl">'+esc(w)+(inv?'INVOICE':'QUOTE')+'</div><div class="meta"><div><span>'+(inv?'Invoice':'Quote')+'#</span>'+esc(d.number)+'</div><div><span>Date</span>'+dmy(inv&&d.invoiceDate?d.invoiceDate:d.date)+'</div></div>'+
+ '<div class="two"><div><div class="bar">Prepared for:</div>'+f.filter(Boolean).map(esc).join('<br>')+'</div><div><div class="bar">Prepared by:</div>Methuja Devvin<br>'+longD(d.prep)+'</div></div>'+
+ '<div class="tbl"><div class="th"><span>Description</span><span class="pr" style="font-size:14px">Price</span></div>'+rows+'</div>'+tot+
+ '<div class="note"><b>NOTE:</b>'+li(d.notes)+'</div><div class="terms">'+(inv?'<img class="seal" src="/assets/paid-seal.png" alt="">':'')+'<h3>Terms &amp; Conditions</h3>'+li(d.terms)+'</div>'+
+ '<div class="bank"><b>Bank Details:</b> M.D.L Geeganage<br>Account Number – 8017827504 (Commercial Bank, Kottawa)'+(inv?'<img class="sg" src="'+SIG+'" alt="">':'')+'<div class="ty" style="position:absolute;left:0;right:0;bottom:0">Thank You!</div></div>';
+ document.title=(inv?'Invoice ':'Quote ')+d.number;show('sheetView');fit()}
+function fit(){var z=Math.min(1,(window.innerWidth-8)/794);$('sheetWrap').style.zoom=z}
+window.onresize=fit;
+$('sBack').onclick=function(){document.title='Framez Quotes';show('editView')};
+$('sPrint').onclick=function(){window.print()};
+
+if(pw)loadList();else show('login');
+</script></body></html>

@@ -83,11 +83,15 @@
         </div>
         <div class="field">
           <label for="photographers">How many photographers needed (optional)</label>
-          <input id="photographers" name="photographers_needed" type="text">
+          <select id="photographers" name="photographers_needed">
+            <option value="None">None</option><option>1</option><option>2</option><option>3</option><option>4</option>
+          </select>
         </div>
         <div class="field">
           <label for="videographers">How many videographers needed (optional)</label>
-          <input id="videographers" name="videographers_needed" type="text">
+          <select id="videographers" name="videographers_needed">
+            <option value="None">None</option><option>1</option><option>2</option><option>3</option><option>4</option>
+          </select>
         </div>
         <div class="field">
           <label for="msg">Special requests (optional)</label>
@@ -133,7 +137,12 @@
     fetch(form.action, {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
-      body: new FormData(form)
+      body: (function(){
+        var fd = new FormData(form), q = new URLSearchParams();
+        ['name','event_name','date','location','time_duration','photographers_needed','videographers_needed'].forEach(function(k){ q.set(k, fd.get(k) || ''); });
+        fd.append('make_quotation', location.origin + '/framez-studio-71895f64d61d.html#new&' + q.toString());
+        return fd;
+      })()
     }).then(function(r){ return r.json(); }).then(function(data){
       if(data && data.success){
         form.reset();
