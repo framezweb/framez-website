@@ -15,17 +15,17 @@ textarea{min-height:90px}label{display:block;font-size:12.5px;color:#555;margin:
 .info{background:#fff8e1;padding:10px;border-radius:8px;font-size:13px;margin-bottom:12px;white-space:pre-wrap}
 #sheetBar{position:sticky;top:0;background:#f3f4f6;padding:10px 14px;z-index:5}
 #sheetWrap{width:794px;margin:0 auto}
-#sheet{width:794px;min-height:1123px;background:#fff;padding:50px 56px;position:relative;font-size:14px;color:#000}
-.hd{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:9px solid #5b8fd9;padding-bottom:16px}
-.hd b{color:#5b8fd9;font-size:19px}.hd img{height:46px}.ttl{text-align:center;color:#4a86d6;font-size:25px;font-weight:bold;margin:34px 0 8px}
+#sheet{width:794px;min-height:1100px;background:#fff;padding:34px 56px 26px;position:relative;font-size:14px;color:#000}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:9px solid #5b8fd9;padding-bottom:12px}
+.hd b{color:#5b8fd9;font-size:19px}.hd img{height:46px}.ttl{text-align:center;color:#4a86d6;font-size:25px;font-weight:bold;margin:26px 0 6px}
 .meta{width:320px;margin-left:auto;margin-bottom:14px}.meta div{display:flex;padding-right:12px}.meta span:first-child{flex:1}.meta span:last-child{width:170px;flex:none}
 .two{display:flex;gap:46px}.two>div{flex:1}.bar{background:#7ea6de;font-weight:bold;padding:3px 6px;margin-bottom:6px}
-.tbl{margin-top:26px}.tbl .th{display:flex;background:#7ea6de;font-weight:bold;padding:5px 12px}.tbl .th span:first-child,.tbl .r div:first-child{flex:1}
-.r{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:2px solid #000}.r big{font-size:18px;display:block}.r small{display:block;font-size:12.5px;line-height:1.5}
+.tbl{margin-top:18px}.tbl .th{display:flex;background:#7ea6de;font-weight:bold;padding:5px 12px}.tbl .th span:first-child,.tbl .r div:first-child{flex:1}
+.r{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:2px solid #000}.r big{font-size:18px;display:block}.r small{display:block;font-size:12.5px;line-height:1.5}
 .pr{width:170px;text-align:left;font-size:18px}.tot{width:320px;margin-left:auto}.tot div{display:flex;border-bottom:2px solid #000;padding:5px 12px 5px 0;font-weight:bold;font-size:17px}
 .tot div span:first-child{flex:1}.tot div span:last-child{font-weight:normal;width:170px;flex:none}.note{margin:12px 0 14px}.note b{font-size:17px}.note ul,.terms ul{margin:4px 0;padding-left:20px}.note li,.terms li{font-size:13px;margin:3px 0}
-.terms{position:relative;border:1px solid #000;border-radius:30px 0 30px 30px;padding:12px 24px}.terms h3{text-align:center;font-weight:normal;font-size:18px;margin:2px 0 6px}
-.bank{position:relative;margin:18px 26px 0;font-size:13.5px;height:120px}.bank img.sg{position:absolute;right:20px;top:-6px;width:200px}
+.terms{position:relative;border:1px solid #000;border-radius:30px;padding:12px 24px}.terms h3{text-align:center;font-weight:normal;font-size:18px;margin:2px 0 6px}
+.bank{position:relative;margin:16px 26px 0;font-size:13.5px;height:92px}.bank img.sg{position:absolute;right:20px;top:-14px;width:185px}
 .seal{position:absolute;right:-62px;top:-66px;width:190px}.ty{text-align:center;font-weight:bold;margin-top:6px}
 @media print{body{background:#fff}.no-print{display:none!important}#sheetWrap{zoom:1!important;width:auto}@page{size:A4;margin:0}#sheet{min-height:0}}
 </style></head><body>
@@ -146,6 +146,9 @@ function sheet(d,inv){var f=d.forLines,rows='',w=(d.title?d.title.toUpperCase()+
 function fit(){var z=Math.min(1,(window.innerWidth-8)/794);$('sheetWrap').style.zoom=z}
 window.onresize=fit;
 $('sBack').onclick=function(){document.title='Framez Quotes';show('editView')};
+function fitPrint(){var s=$('sheet');s.style.zoom='';var h=s.scrollHeight;if(h>1116){s.style.zoom=1116/h;s.style.margin='0 auto'}}
+function unfitPrint(){var s=$('sheet');s.style.zoom='';s.style.margin=''}
+window.addEventListener('beforeprint',fitPrint);window.addEventListener('afterprint',unfitPrint);
 $('sPrint').onclick=function(){window.print()};
 
 if(pw)loadList();else show('login');
