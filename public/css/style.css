@@ -389,3 +389,10 @@ footer.site{
   background:none; border:none; color:#5c5c5c; font-size:26px; line-height:1;
   cursor:pointer; padding:4px 8px; flex-shrink:0;
 }
+
+/* PROTECTED ALBUM: help text + WhatsApp button */
+.lock-help{margin-top:28px; padding-top:24px; border-top:1px solid var(--line);}
+.lock-help p{font-size:13.5px; margin-bottom:16px;}
+.lock-phone{color:var(--fg); border-bottom:1px solid var(--fg); white-space:nowrap;}
+.lock-wa{display:inline-flex; align-items:center; gap:8px; padding:10px 18px; font-size:13px;}
+.lock-wa svg{width:17px; height:17px; fill:currentColor;}
