@@ -1,4 +1,5 @@
 const { getDriveClient } = require('./utils/drive');
+const { safeEqual, isBlocked, recordFail, TOO_MANY } = require('./utils/security');
 
 // Turns a normal YouTube URL (watch, youtu.be, shorts) into an embeddable
 // https://www.youtube.com/embed/VIDEO_ID link. Returns null if no video ID
@@ -19,6 +20,7 @@ function toEmbedUrl(rawUrl) {
 
     if (!videoId) return null;
     videoId = videoId.split('&')[0].split('?')[0];
+    if (!/^[A-Za-z0-9_-]{6,20}$/.test(videoId)) return null;
     return 'https://www.youtube.com/embed/' + videoId;
   } catch (err) {
     return null;
@@ -48,7 +50,9 @@ exports.handler = async function (event) {
     const meta = await readMeta(drive, albumId);
 
     if (meta.locked) {
-      if (!meta.password || suppliedPassword !== meta.password) {
+      if (suppliedPassword && (await isBlocked(event, albumId))) return TOO_MANY;
+      if (!meta.password || !suppliedPassword || !safeEqual(suppliedPassword, meta.password)) {
+        if (suppliedPassword) await recordFail(event, albumId);
         return {
           statusCode: 401,
           body: JSON.stringify({ error: 'This video album is locked.', locked: true }),
@@ -73,6 +77,7 @@ exports.handler = async function (event) {
       body: JSON.stringify({ title: meta.title || null, videos }),
     };
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    console.error(err);
+    return { statusCode: 500, body: JSON.stringify({ error: 'Something went wrong. Please try again.' }) };
   }
 };

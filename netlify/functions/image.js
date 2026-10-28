@@ -1,4 +1,5 @@
 const { getDriveClient } = require('./utils/drive');
+const { safeEqual, isBlocked, recordFail, TOO_MANY } = require('./utils/security');
 
 // Serves a resized Drive photo through your own site, with caching, so
 // previews don't depend on Google's thumbnail links.
@@ -19,7 +20,7 @@ exports.handler = async function (event) {
   try {
     const q = event.queryStringParameters || {};
     const id = q.id;
-    const albumId = q.album || '';
+    const albumId = /^[A-Za-z0-9_-]*$/.test(q.album || '') ? (q.album || '') : '';
     const password = q.password || '';
     let width = parseInt(q.w, 10) || 600;
     if (width < 100) width = 100;
@@ -34,8 +35,12 @@ exports.handler = async function (event) {
     // If this photo belongs to a locked album, only serve it with the right password.
     if (albumId) {
       const meta = await readMeta(drive, albumId);
-      if (meta.locked && (!meta.password || password !== meta.password)) {
-        return { statusCode: 401, body: 'This album is locked.' };
+      if (meta.locked) {
+        if (password && (await isBlocked(event, albumId))) return TOO_MANY;
+        if (!meta.password || !password || !safeEqual(password, meta.password)) {
+          if (password) await recordFail(event, albumId);
+          return { statusCode: 401, body: 'This album is locked.' };
+        }
       }
     }
 
@@ -69,10 +74,12 @@ exports.handler = async function (event) {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': locked ? 'private, max-age=86400' : 'public, max-age=604800, s-maxage=604800',
+        ...(locked ? {} : { 'Netlify-CDN-Cache-Control': 'public, s-maxage=604800, stale-while-revalidate=86400' }),
       },
       body: buffer.toString('base64'),
     };
   } catch (err) {
-    return { statusCode: 500, body: 'Image error: ' + err.message };
+    console.error(err);
+    return { statusCode: 500, body: 'Image error.' };
   }
 };

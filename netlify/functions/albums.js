@@ -57,13 +57,14 @@ exports.handler = async function () {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60', 'Netlify-CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600' },
       body: JSON.stringify({ albums }),
     };
   } catch (err) {
+    console.error(err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
+      body: JSON.stringify({ error: 'Something went wrong. Please try again.' }),
     };
   }
 };

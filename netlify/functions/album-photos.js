@@ -1,3 +1,4 @@
+const { safeEqual, isBlocked, recordFail, TOO_MANY } = require('./utils/security');
 const { getDriveClient, directImageUrl, downloadUrl, toDirectDownload, thumbnailUrl } = require('./utils/drive');
 
 async function readMeta(drive, folderId) {
@@ -32,7 +33,10 @@ exports.handler = async function (event) {
     // The password itself is stored only in the private _meta.json file in
     // Drive and never sent to the browser — only this pass/fail result is.
     if (meta.locked) {
-      if (!meta.password || suppliedPassword !== meta.password) {
+      // Too many wrong tries from this visitor? Stop guessing for 15 minutes.
+      if (suppliedPassword && (await isBlocked(event, albumId))) return TOO_MANY;
+      if (!meta.password || !suppliedPassword || !safeEqual(suppliedPassword, meta.password)) {
+        if (suppliedPassword) await recordFail(event, albumId);
         return {
           statusCode: 401,
           body: JSON.stringify({ error: 'This album is locked.', locked: true }),
@@ -62,8 +66,8 @@ exports.handler = async function (event) {
     const photos = allFiles.map((f) => ({
       id: f.id,
       name: f.name,
-      thumb: '/api/image?id=' + f.id + '&w=600&album=' + encodeURIComponent(albumId) + pwPart,
-      large: '/api/image?id=' + f.id + '&w=1600&album=' + encodeURIComponent(albumId) + pwPart,
+      thumb: '/api/image?id=' + f.id + '&w=400&album=' + encodeURIComponent(albumId) + pwPart,
+      large: '/api/image?id=' + f.id + '&w=1200&album=' + encodeURIComponent(albumId) + pwPart,
       full: directImageUrl(f.id),
       download: downloadUrl(f.id),
     }));
@@ -72,11 +76,16 @@ exports.handler = async function (event) {
     if (!bannerId) bannerId = findByName(allFiles, meta.cover);
     if (!bannerId && allFiles[0]) bannerId = allFiles[0].id;
 
+    // Cover photo (used in the "thanks for downloading" pop-up)
+    let coverId = findByName(allFiles, meta.cover);
+    if (!coverId && allFiles[0]) coverId = allFiles[0].id;
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title: meta.title || null,
+        cover: coverId ? '/api/image?id=' + coverId + '&w=800&album=' + encodeURIComponent(albumId) + (suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : '') : null,
         date: meta.date || null,
         zipLink: toDirectDownload(meta.zipLink),
         banner: bannerId ? '/api/image?id=' + bannerId + '&w=1600&album=' + encodeURIComponent(albumId) + (suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : '') : null,
@@ -84,6 +93,7 @@ exports.handler = async function (event) {
       }),
     };
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    console.error(err);
+    return { statusCode: 500, body: JSON.stringify({ error: 'Something went wrong. Please try again.' }) };
   }
 };
