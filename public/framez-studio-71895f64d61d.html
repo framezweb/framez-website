@@ -26,7 +26,7 @@ textarea{min-height:90px}label{display:block;font-size:12.5px;color:#555;margin:
 .tot div span:first-child{flex:1}.tot div span:last-child{font-weight:normal;width:170px;flex:none}.note{margin:12px 0 14px}.note b{font-size:17px}.note ul,.terms ul{margin:4px 0;padding-left:20px}.note li,.terms li{font-size:13px;margin:3px 0}
 .terms{position:relative;border:1px solid #000;border-radius:30px;padding:12px 24px}.terms h3{text-align:center;font-weight:normal;font-size:18px;margin:2px 0 6px}
 .bank{position:relative;margin:16px 26px 0;font-size:13.5px;height:92px}.bank img.sg{position:absolute;right:20px;top:-14px;width:185px}
-.seal{position:absolute;right:-62px;top:-66px;width:190px}.ty{text-align:center;font-weight:bold;margin-top:6px}
+.seal{position:absolute;right:-44px;top:-66px;width:190px}.ty{text-align:center;font-weight:bold;margin-top:6px}
 @media print{body{background:#fff}.no-print{display:none!important}#sheetWrap{zoom:1!important;width:auto}@page{size:A4;margin:0}#sheet{min-height:0}}
 </style></head><body>
 
@@ -41,7 +41,7 @@ textarea{min-height:90px}label{display:block;font-size:12.5px;color:#555;margin:
 
 <div id="editView" class="wrap no-print" hidden>
  <button class="btn alt" id="backBtn">&larr; Back</button>
- <div class="info" id="clientInfo"></div>
+ <div class="card"><label class="tg"><input type="checkbox" id="c_on"> Client name on the quote</label><div class="sec"><input id="c_name" placeholder="Client name"></div></div>
  <div class="card">
   <label>Heading word (clear it for just QUOTE)</label><input id="f_title" value="Event">
   <div class="row"><div><label>Number</label><input id="f_number"></div><div><label>Date</label><input id="f_date" type="date"></div></div>
@@ -55,6 +55,14 @@ textarea{min-height:90px}label{display:block;font-size:12.5px;color:#555;margin:
   <div class="row"><div><label>Photographers</label><select id="p_n"><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div><label>Price (Rs.)</label><input id="p_price" type="number" inputmode="numeric"></div></div></div></div>
  <div class="card"><label class="tg"><input type="checkbox" id="v_on"> Videography</label><div class="sec">
   <div class="row"><div><label>Video cameras</label><select id="v_n"><option>1</option><option>2</option><option>3</option><option>4</option></select></div><div><label>Price (Rs.)</label><input id="v_price" type="number" inputmode="numeric"></div></div></div></div>
+ <div class="card"><label class="tg"><input type="checkbox" id="e_on"> Extra item 1 (e.g. Board video)</label><div class="sec">
+  <label>Name</label><input id="e_title" placeholder="e.g. Board Video">
+  <label>Description (press Enter for each new line)</label><textarea id="e_desc" rows="4" placeholder="e.g. 4K video editing"></textarea>
+  <label>Price (Rs.)</label><input id="e_price" type="number" inputmode="numeric"></div></div>
+ <div class="card"><label class="tg"><input type="checkbox" id="e2_on"> Extra item 2</label><div class="sec">
+  <label>Name</label><input id="e2_title" placeholder="Name">
+  <label>Description (press Enter for each new line)</label><textarea id="e2_desc" rows="4"></textarea>
+  <label>Price (Rs.)</label><input id="e2_price" type="number" inputmode="numeric"></div></div>
  <div class="card"><label class="tg"><input type="checkbox" id="t_on"> Travelling cost</label><div class="sec"><label>Amount (Rs.)</label><input id="t_amt" type="number" inputmode="numeric"></div>
   <label class="tg"><input type="checkbox" id="d_on"> Discount</label><div class="sec"><label>Amount (Rs.)</label><input id="d_amt" type="number" inputmode="numeric"></div>
   <b id="totalLine"></b></div>
@@ -65,7 +73,7 @@ textarea{min-height:90px}label{display:block;font-size:12.5px;color:#555;margin:
 </div>
 
 <div id="sheetView" hidden>
- <div id="sheetBar" class="no-print"><button class="btn alt" id="sBack">&larr; Back</button><button class="btn" id="sPrint">Print / Save as PDF</button></div>
+ <div id="sheetBar" class="no-print"><button class="btn alt" id="sBack">&larr; Back</button><button class="btn" id="sPrint">Download PDF</button></div>
  <div id="sheetWrap"><div id="sheet"></div></div>
 </div>
 
@@ -99,26 +107,28 @@ $('newBtn').onclick=function(){newDoc({})};
 
 /* editor */
 function parseHash(){var p=new URLSearchParams(location.hash.slice(1));return{client:p.get('name')||'',event:p.get('event_name')||'',date:p.get('date')||'',loc:p.get('location')||'',time:p.get('time_duration')||'',ph:parseInt(p.get('photographers_needed'))||0,vi:parseInt(p.get('videographers_needed'))||0}}
-function newDoc(h){openDoc({number:nextNo,title:'Event',date:today(),prep:today(),client:h.client||'',forLines:[h.event||'',h.loc||'',h.date||'',h.time||''],
- photo:{on:h.ph>0,count:h.ph||1,price:''},video:{on:h.vi>0,count:h.vi||1,price:''},travel:{on:false,amount:''},discount:{on:false,amount:''},notes:NOTES,terms:TERMS},false)}
+function newDoc(h){openDoc({number:nextNo,title:'Event',date:today(),prep:today(),client:h.client||'',clientOn:!!h.client,forLines:[h.event||'',h.loc||'',h.date||'',h.time||''],
+ photo:{on:h.ph>0,count:h.ph||1,price:''},video:{on:h.vi>0,count:h.vi||1,price:''},extra:{on:false,title:'',desc:'',price:''},extra2:{on:false,title:'',desc:'',price:''},travel:{on:false,amount:''},discount:{on:false,amount:''},notes:NOTES,terms:TERMS},false)}
 function tog(id){var c=$(id);c.parentNode.nextElementSibling.classList.toggle('show',c.checked)}
-['p_on','v_on','t_on','d_on'].forEach(function(id){$(id).onchange=function(){tog(id);calc()}});
-['p_price','v_price','t_amt','d_amt'].forEach(function(id){$(id).oninput=calc});
+['p_on','v_on','e_on','e2_on','t_on','d_on'].forEach(function(id){$(id).onchange=function(){tog(id);calc()}});
+['p_price','v_price','e_price','e2_price','t_amt','d_amt'].forEach(function(id){$(id).oninput=calc});
 function openDoc(d,isSaved){cur=d;saved=isSaved;var f=d.forLines||['','','',''];
  $('f_title').value=d.title==null?'Event':d.title;$('f_number').value=d.number;$('f_date').value=d.date;$('f_prep').value=d.prep||d.date;
  $('f_event').value=f[0];$('f_loc').value=f[1];$('f_edate').value=f[2];$('f_time').value=f[3];
  $('p_on').checked=d.photo.on;$('p_n').value=d.photo.count;$('p_price').value=d.photo.price;
+ var ex=d.extra||{};$('e_on').checked=!!ex.on;$('e_title').value=ex.title||'';$('e_desc').value=ex.desc||'';$('e_price').value=ex.price||'';
+ var e2=d.extra2||{};$('e2_on').checked=!!e2.on;$('e2_title').value=e2.title||'';$('e2_desc').value=e2.desc||'';$('e2_price').value=e2.price||'';
  $('v_on').checked=d.video.on;$('v_n').value=d.video.count;$('v_price').value=d.video.price;
  $('t_on').checked=d.travel.on;$('t_amt').value=d.travel.amount;$('d_on').checked=d.discount.on;$('d_amt').value=d.discount.amount;
- ['p_on','v_on','t_on','d_on'].forEach(tog);$('f_notes').value=d.notes;$('f_terms').value=d.terms;
- $('clientInfo').textContent=d.client?'Client: '+d.client:'';$('clientInfo').style.display=d.client?'block':'none';
+ ['p_on','v_on','e_on','e2_on','t_on','d_on'].forEach(tog);$('f_notes').value=d.notes;$('f_terms').value=d.terms;
+ $('c_on').checked=!!d.clientOn;$('c_name').value=d.client||'';tog('c_on');
  $('mkInv').hidden=!isSaved||!!d.invoiced;$('viewI').hidden=!d.invoiced;$('msg').textContent='';calc();show('editView')}
 function read(){var n=function(id){return parseFloat($(id).value)||0};
- var d={client:cur.client,invoiced:cur.invoiced,invoiceDate:cur.invoiceDate,title:$('f_title').value.trim(),number:$('f_number').value,date:$('f_date').value||today(),prep:$('f_prep').value||$('f_date').value||today(),
+ var d={client:$('c_name').value.trim(),clientOn:$('c_on').checked,invoiced:cur.invoiced,invoiceDate:cur.invoiceDate,title:$('f_title').value.trim(),number:$('f_number').value,date:$('f_date').value||today(),prep:$('f_prep').value||$('f_date').value||today(),
  forLines:[$('f_event').value,$('f_loc').value,$('f_edate').value,$('f_time').value],
- photo:{on:$('p_on').checked,count:+$('p_n').value,price:n('p_price')},video:{on:$('v_on').checked,count:+$('v_n').value,price:n('v_price')},
+ photo:{on:$('p_on').checked,count:+$('p_n').value,price:n('p_price')},video:{on:$('v_on').checked,count:+$('v_n').value,price:n('v_price')},extra:{on:$('e_on').checked,title:$('e_title').value.trim(),desc:$('e_desc').value,price:n('e_price')},extra2:{on:$('e2_on').checked,title:$('e2_title').value.trim(),desc:$('e2_desc').value,price:n('e2_price')},
  travel:{on:$('t_on').checked,amount:n('t_amt')},discount:{on:$('d_on').checked,amount:n('d_amt')},notes:$('f_notes').value,terms:$('f_terms').value};
- var sub=(d.photo.on?d.photo.price:0)+(d.video.on?d.video.price:0)+(d.travel.on?d.travel.amount:0);d.sub=sub;d.total=sub-(d.discount.on?d.discount.amount:0);return d}
+ var sub=(d.photo.on?d.photo.price:0)+(d.video.on?d.video.price:0)+(d.extra.on?d.extra.price:0)+(d.extra2.on?d.extra2.price:0)+(d.travel.on?d.travel.amount:0);d.sub=sub;d.total=sub-(d.discount.on?d.discount.amount:0);return d}
 function calc(){$('totalLine').textContent='Total: '+money(read().total)}
 function save(){var d=read();return api('POST','',{doc:d}).then(function(r){if(r.error){$('msg').textContent=r.error;throw 0}d.number=r.number;cur=d;saved=true;$('f_number').value=r.number;$('mkInv').hidden=!!d.invoiced;$('msg').textContent='Saved as #'+r.number;return d})}
 $('saveBtn').onclick=function(){save().catch(function(){})};
@@ -130,15 +140,17 @@ $('mkInv').onclick=function(){if(!confirm('Make an invoice from this quotation?'
 
 /* printable sheet */
 function plural(n,w){return n+' '+w+(n>1?'s':'')}
-function sheet(d,inv){var f=d.forLines,rows='',w=(d.title?d.title.toUpperCase()+' ':'');
+var lastSheet=null;
+function sheet(d,inv){lastSheet={d:d,inv:inv};var f=d.forLines,rows='',w=(d.title?d.title.toUpperCase()+' ':'');
  if(d.photo.on)rows+='<div class="r"><div><big>Photography</big><small>'+plural(d.photo.count,'Photographer')+'<br>Full event coverage<br>Professionally Edited Softcopies</small></div><div class="pr">'+money(d.photo.price)+'</div></div>';
  if(d.video.on)rows+='<div class="r"><div><big>Videography</big><small>4K High Resolution Video<br>Edited Video<br>'+plural(d.video.count,'Video Camera')+'</small></div><div class="pr">'+money(d.video.price)+'</div></div>';
+ [d.extra,d.extra2].forEach(function(x){if(x&&x.on&&x.title)rows+='<div class="r"><div><big>'+esc(x.title)+'</big><small>'+x.desc.split('\n').filter(Boolean).map(esc).join('<br>')+'</small></div><div class="pr">'+money(x.price)+'</div></div>'});
  if(d.travel.on)rows+='<div class="r"><div><big>Travelling Cost</big></div><div class="pr">'+money(d.travel.amount)+'</div></div>';
  var tot='<div class="tot">'+(d.discount.on?'<div><span>Sub Total</span><span>'+money(d.sub)+'</span></div><div><span>Discount</span><span>'+money(d.discount.amount)+'</span></div>':'')+'<div><span>Total</span><span>'+money(d.total)+'</span></div></div>';
  var li=function(t){return '<ul>'+t.split('\n').filter(Boolean).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'};
  $('sheet').innerHTML='<div class="hd"><div><b>FRAMEZ</b><br>methuja@framez.lk<br>0769644887</div><img src="/assets/logo.png" alt="FRAMEZ"></div>'+
  '<div class="ttl">'+esc(w)+(inv?'INVOICE':'QUOTE')+'</div><div class="meta"><div><span>'+(inv?'Invoice':'Quote')+'#</span><span>'+esc(d.number)+'</span></div><div><span>Date</span><span>'+dmy(inv&&d.invoiceDate?d.invoiceDate:d.date)+'</span></div></div>'+
- '<div class="two"><div><div class="bar">Prepared for:</div>'+f.filter(Boolean).map(esc).join('<br>')+'</div><div><div class="bar">Prepared by:</div>Methuja Devvin<br>'+longD(d.prep)+'</div></div>'+
+ '<div class="two"><div><div class="bar">Prepared for:</div>'+(d.clientOn&&d.client?'<b>'+esc(d.client)+'</b><br>':'')+f.filter(Boolean).map(esc).join('<br>')+'</div><div><div class="bar">Prepared by:</div>Methuja Devvin<br>'+longD(d.prep)+'</div></div>'+
  '<div class="tbl"><div class="th"><span>Description</span><span class="pr" style="font-size:14px">Price</span></div>'+rows+'</div>'+tot+
  '<div class="note"><b>NOTE:</b>'+li(d.notes)+'</div><div class="terms">'+(inv?'<img class="seal" src="/assets/paid-seal.png" alt="">':'')+'<h3>Terms &amp; Conditions</h3>'+li(d.terms)+'</div>'+
  '<div class="bank"><b>Bank Details:</b> M.D.L Geeganage<br>Account Number – 8017827504 (Commercial Bank, Kottawa)'+(inv?'<img class="sg" src="'+SIG+'" alt="">':'')+'<div class="ty" style="position:absolute;left:0;right:0;bottom:0">Thank You!</div></div>';
@@ -149,7 +161,51 @@ $('sBack').onclick=function(){document.title='Framez Quotes';show('editView')};
 function fitPrint(){var s=$('sheet');s.style.zoom='';var h=s.scrollHeight;if(h>1116){s.style.zoom=1116/h;s.style.margin='0 auto'}}
 function unfitPrint(){var s=$('sheet');s.style.zoom='';s.style.margin=''}
 window.addEventListener('beforeprint',fitPrint);window.addEventListener('afterprint',unfitPrint);
-$('sPrint').onclick=function(){window.print()};
+
+/* ---- real PDF file (no browser print header/footer, same on phone and computer) ---- */
+function drawSheet(){
+ var el=$('sheet'),wrap=$('sheetWrap'),oldZ=wrap.style.zoom;wrap.style.zoom=1;
+ var S=2.5,W=794,H=1123,R=el.getBoundingClientRect(),nat=Math.max(el.scrollHeight,1),k=nat>H?H/nat:1;
+ var cv=document.createElement('canvas');cv.width=Math.round(W*S);cv.height=Math.round(H*S);
+ var c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,cv.width,cv.height);c.scale(S*k,S*k);c.textBaseline='middle';
+ var late=[],X=function(v){return v-R.left},Y=function(v){return v-R.top};
+ function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+ function words(node,fn){var t=node.data,re=/\S+/g,m,g=document.createRange();while((m=re.exec(t))){g.setStart(node,m.index);g.setEnd(node,m.index+m[0].length);var q=g.getClientRects()[0];if(q&&q.width)fn(m[0],q)}}
+ function text(node){if(!node.data.trim())return;var cs=getComputedStyle(node.parentElement);c.font=cs.fontStyle+' '+cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily;c.fillStyle=cs.color;words(node,function(w,q){c.fillText(w,X(q.left),Y(q.top+q.height/2))})}
+ function img(e){var r=e.getBoundingClientRect();if(e.complete&&e.naturalWidth)c.drawImage(e,X(r.left),Y(r.top),r.width,r.height)}
+ function walk(e){
+  var cs=getComputedStyle(e);if(cs.display==='none')return;var r=e.getBoundingClientRect();
+  if(e.tagName==='IMG'){if(cs.position==='absolute')late.push(e);else img(e);return}
+  var bg=cs.backgroundColor;if(e!==el&&bg&&bg!=='transparent'&&bg!=='rgba(0, 0, 0, 0)'){c.fillStyle=bg;c.fillRect(X(r.left),Y(r.top),r.width,r.height)}
+  var rad=parseFloat(cs.borderTopLeftRadius)||0,bw=parseFloat(cs.borderTopWidth)||0;
+  if(rad>0&&bw>0){c.strokeStyle=cs.borderTopColor;c.lineWidth=bw;rr(X(r.left)+bw/2,Y(r.top)+bw/2,r.width-bw,r.height-bw,rad);c.stroke()}
+  else{[['Top',r.left,r.top,r.width,0],['Bottom',r.left,r.bottom,r.width,1],['Left',r.left,r.top,0,0],['Right',r.right,r.top,0,0]].forEach(function(s){
+   var w=parseFloat(cs['border'+s[0]+'Width'])||0;if(!w||cs['border'+s[0]+'Style']==='none')return;c.fillStyle=cs['border'+s[0]+'Color'];
+   if(s[0]==='Top')c.fillRect(X(r.left),Y(r.top),r.width,w);if(s[0]==='Bottom')c.fillRect(X(r.left),Y(r.bottom)-w,r.width,w);
+   if(s[0]==='Left')c.fillRect(X(r.left),Y(r.top),w,r.height);if(s[0]==='Right')c.fillRect(X(r.right)-w,Y(r.top),w,r.height)})}
+  if(e.tagName==='LI'){var tn=e.firstChild;while(tn&&tn.nodeType!==3)tn=tn.firstChild;if(tn)words(tn,function(w,q){if(e._m)return;e._m=1;c.fillStyle='#000';c.beginPath();c.arc(X(q.left)-11,Y(q.top+q.height/2),2.3,0,7);c.fill()});e._m=0}
+  for(var n=e.firstChild;n;n=n.nextSibling){if(n.nodeType===1)walk(n);else if(n.nodeType===3)text(n)}
+ }
+ walk(el);late.forEach(img);wrap.style.zoom=oldZ;return cv}
+function buildPdf(){
+ var cv=drawSheet(),b64=cv.toDataURL('image/jpeg',0.93).split(',')[1],bin=atob(b64),len=bin.length,jpg=new Uint8Array(len);
+ for(var i=0;i<len;i++)jpg[i]=bin.charCodeAt(i);
+ var enc=function(s){return new TextEncoder().encode(s)},parts=[],off=[],pos=0;
+ function push(u){parts.push(u);pos+=u.length}function obj(n,b){off[n]=pos;push(enc(n+' 0 obj\n'+b+'\nendobj\n'))}
+ push(enc('%PDF-1.4\n'));obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+ obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>');
+ off[4]=pos;push(enc('4 0 obj\n<< /Type /XObject /Subtype /Image /Width '+cv.width+' /Height '+cv.height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+len+' >>\nstream\n'));push(jpg);push(enc('\nendstream\nendobj\n'));
+ var cs='q 595.28 0 0 841.89 0 0 cm /Im0 Do Q';obj(5,'<< /Length '+cs.length+' >>\nstream\n'+cs+'\nendstream');
+ var xr=pos,x='xref\n0 6\n0000000000 65535 f \n';for(var n=1;n<=5;n++)x+=String(off[n]).padStart(10,'0')+' 00000 n \n';
+ push(enc(x+'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF'));
+ return new Blob(parts,{type:'application/pdf'})}
+function saveBlob(b,name){var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove()},4000)}
+$('sPrint').onclick=function(){
+ if(!lastSheet)return;var name=(lastSheet.inv?'Invoice_':'Quote_')+lastSheet.d.number+'.pdf',blob=buildPdf(),file=null;
+ try{file=new File([blob],name,{type:'application/pdf'})}catch(e){}
+ if(file&&navigator.canShare&&navigator.canShare({files:[file]})&&/iPhone|iPad|Android/i.test(navigator.userAgent)){
+  navigator.share({files:[file],title:name}).catch(function(e){if(!e||e.name!=='AbortError')saveBlob(blob,name)})}
+ else saveBlob(blob,name)};
 
 if(pw)loadList();else show('login');
 </script></body></html>

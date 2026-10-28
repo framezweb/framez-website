@@ -163,12 +163,12 @@
       var top = data.albums.slice(0, 3);
       el.innerHTML = top.map(function (a) {
         return (
-          '<a class="album-tile" href="/album.html?id=' + a.id + '">' +
+          '<a class="album-tile" href="/album.html?id=' + encodeURIComponent(a.id) + '">' +
             '<div class="album-thumb">' +
-              (a.cover ? '<img src="' + a.cover + '" alt="' + a.title + '">' : '<span class="placeholder">No cover yet</span>') +
+              (a.cover ? '<img src="' + escapeHtml(a.cover) + '" alt="' + escapeHtml(a.title) + '">' : '<span class="placeholder">No cover yet</span>') +
               (a.locked ? '<span class="lock-badge">LOCKED</span>' : '') +
             '</div>' +
-            '<div class="album-meta"><h4 class="serif">' + a.title + '</h4></div>' +
+            '<div class="album-meta"><h4 class="serif">' + escapeHtml(a.title) + '</h4></div>' +
           '</a>'
         );
       }).join('');
@@ -188,14 +188,14 @@
       var top = data.albums.slice(0, 3);
       el.innerHTML = top.map(function (a) {
         return (
-          '<a class="album-tile" href="/video-album.html?id=' + a.id + '">' +
+          '<a class="album-tile" href="/video-album.html?id=' + encodeURIComponent(a.id) + '">' +
             '<div class="album-thumb video-thumb">' +
               (a.cover
-                ? '<img src="' + a.cover + '" alt="' + a.title + '">'
+                ? '<img src="' + escapeHtml(a.cover) + '" alt="' + escapeHtml(a.title) + '">'
                 : '<span class="placeholder">' + a.count + (a.count === 1 ? ' video' : ' videos') + '</span>') +
               (a.locked ? '<span class="lock-badge">LOCKED</span>' : '') +
             '</div>' +
-            '<div class="album-meta"><h4 class="serif">' + a.title + '</h4></div>' +
+            '<div class="album-meta"><h4 class="serif">' + escapeHtml(a.title) + '</h4></div>' +
           '</a>'
         );
       }).join('');

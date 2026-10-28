@@ -78,6 +78,7 @@
     </div>
 
     <div class="photo-grid natural" id="photoGrid"></div>
+    <div style="text-align:center; margin:34px 0 10px; display:none;"><button type="button" class="btn btn-solid" id="moreBtn">Load more</button></div>
     <p class="state-msg" id="stateMsg" style="display:none;"></p>
   </div>
 </section>
@@ -157,6 +158,11 @@
   var HEART_SVG = '<svg viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
 
   var photos = [];
+  var albumName = '';
+  var albumCover = null;
+  var viewedIds = {};
+  var viewedCount = 0;
+  var nudgePending = false;
   var favs = [];
   var currentTab = 'all';
   var storeKey = 'framez_fav_' + albumId;
@@ -205,47 +211,68 @@
   }
 
   /* ---------- Grid ---------- */
+  var BATCH = 48, shown = 0, curList = [];
+  var moreBtn = document.getElementById('moreBtn');
+
+  function makeTile(p, idx) {
+    var tile = document.createElement('div');
+    tile.className = 'photo-tile';
+
+    var img = document.createElement('img');
+    img.src = p.thumb;
+    img.alt = p.name;
+    img.loading = 'lazy';
+    img.addEventListener('click', function () { openViewer(idx); });
+
+    var heart = document.createElement('button');
+    heart.type = 'button';
+    heart.className = 'tile-heart heart-btn';
+    heart.setAttribute('aria-label', 'Favorite');
+    heart.setAttribute('data-id', p.id);
+    heart.innerHTML = HEART_SVG;
+    setHeartState(heart, isFav(p.id));
+    heart.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleFav(p.id);
+      if (currentTab === 'fav') renderGrid();
+      else setHeartState(heart, isFav(p.id));
+    });
+
+    tile.appendChild(img);
+    tile.appendChild(heart);
+    return tile;
+  }
+
+  // Shows the next 48 photos (so visitors only download what they scroll to)
+  function addBatch() {
+    var end = Math.min(shown + BATCH, curList.length);
+    for (var i = shown; i < end; i++) gridEl.appendChild(makeTile(curList[i], i));
+    shown = end;
+    layoutMasonry(gridEl);
+    if (shown < curList.length) {
+      moreBtn.textContent = 'Load more (' + (curList.length - shown) + ' left)';
+      moreBtn.parentNode.style.display = 'block';
+    } else {
+      moreBtn.parentNode.style.display = 'none';
+    }
+  }
+
   function renderGrid() {
-    var list = visiblePhotos();
+    curList = visiblePhotos();
     gridEl.innerHTML = '';
     gridEl.style.height = '';
     stateEl.style.display = 'none';
-    if (!list.length) {
+    moreBtn.parentNode.style.display = 'none';
+    shown = 0;
+    if (!curList.length) {
       showState(currentTab === 'fav'
         ? 'No favorites yet. Tap the heart on a photo to add it here.'
         : 'No photos in this album yet.');
       return;
     }
-    list.forEach(function (p, idx) {
-      var tile = document.createElement('div');
-      tile.className = 'photo-tile';
-
-      var img = document.createElement('img');
-      img.src = p.thumb;
-      img.alt = p.name;
-      img.loading = 'lazy';
-      img.addEventListener('click', function () { openViewer(idx); });
-
-      var heart = document.createElement('button');
-      heart.type = 'button';
-      heart.className = 'tile-heart heart-btn';
-      heart.setAttribute('aria-label', 'Favorite');
-      heart.setAttribute('data-id', p.id);
-      heart.innerHTML = HEART_SVG;
-      setHeartState(heart, isFav(p.id));
-      heart.addEventListener('click', function (e) {
-        e.stopPropagation();
-        toggleFav(p.id);
-        if (currentTab === 'fav') renderGrid();
-        else setHeartState(heart, isFav(p.id));
-      });
-
-      tile.appendChild(img);
-      tile.appendChild(heart);
-      gridEl.appendChild(tile);
-    });
-    layoutMasonry(gridEl);
+    addBatch();
   }
+  moreBtn.addEventListener('click', addBatch);
 
   function switchTab(name) {
     currentTab = name;
@@ -255,6 +282,16 @@
   }
   tabAll.addEventListener('click', function () { switchTab('all'); });
   tabFav.addEventListener('click', function () { switchTab('fav'); });
+
+  /* ---------- Pop-ups ---------- */
+  // Big "thanks for downloading" pop-up (shows once per visit)
+  function afterDownload() {
+    setTimeout(function () {
+      if (window.framezPopups) framezPopups.showDownload({ title: albumName, cover: albumCover });
+    }, 900);
+  }
+  dlAllBtn.addEventListener('click', afterDownload);
+  menuAll.addEventListener('click', afterDownload);
 
   /* ---------- Download menu ---------- */
   dlMenuBtn.addEventListener('click', function (e) {
@@ -280,6 +317,7 @@
       return;
     }
     toast('Downloading ' + list.length + ' photo' + (list.length > 1 ? 's' : '') + '. If your browser asks, tap Allow.');
+    afterDownload();
     list.forEach(function (p, i) {
       setTimeout(function () {
         var f = document.createElement('iframe');
@@ -296,6 +334,7 @@
   var vImg = document.getElementById('vImg');
   var vCount = document.getElementById('vCount');
   var vDownload = document.getElementById('vDownload');
+  vDownload.addEventListener('click', afterDownload);
   var vHeart = document.getElementById('vHeart');
   var vStage = document.getElementById('vStage');
   var vList = [];
@@ -306,6 +345,11 @@
   function showViewerPhoto() {
     var p = vList[vIndex];
     if (!p) return;
+    if (!viewedIds[p.id]) {
+      viewedIds[p.id] = true;
+      viewedCount++;
+      if (viewedCount >= 12) nudgePending = true;
+    }
     vImg.src = p.large;
     vImg.alt = p.name;
     vCount.textContent = (vIndex + 1) + ' / ' + vList.length;
@@ -331,6 +375,12 @@
     viewerEl.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     vImg.src = '';
+    if (nudgePending) {
+      nudgePending = false;
+      setTimeout(function () {
+        if (!vOpen && window.framezPopups) framezPopups.showAlbumNudge({ title: albumName });
+      }, 500);
+    }
     if (vChanged) {
       if (currentTab === 'fav') renderGrid(); else refreshHearts();
     }
@@ -396,7 +446,15 @@
     }
     var url = '/api/album-photos?id=' + encodeURIComponent(albumId) + (password ? '&password=' + encodeURIComponent(password) : '');
     fetch(url).then(function (r) {
+      if (r.status === 429) {
+        gateEl.style.display = 'block';
+        titleEl.textContent = 'Protected Album';
+        errorEl.textContent = 'Too many wrong tries. Please wait 15 minutes and try again.';
+        errorEl.style.display = 'block';
+        return null;
+      }
       if (r.status === 401) {
+        errorEl.textContent = 'That password isn\'t right \u2014 try again.';
         gateEl.style.display = 'block';
         titleEl.textContent = 'Protected Album';
         if (password) errorEl.style.display = 'block';
@@ -407,6 +465,8 @@
       if (!data) return;
       gateEl.style.display = 'none';
       titleEl.textContent = data.title || 'Album';
+      albumName = data.title || 'Album';
+      albumCover = data.cover || data.banner || null;
       if (data.banner) heroEl.style.backgroundImage = 'linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.45)), url(' + data.banner + ')';
       if (data.date) { dateEl.textContent = data.date; dateEl.style.display = 'block'; }
 
