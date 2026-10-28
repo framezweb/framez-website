@@ -234,7 +234,7 @@ window.layoutMasonry = layoutMasonry;
       'Hi Framez! I saw the ' + title + ' album. I\u2019m planning an event.');
   }
 
-  // After 10 seconds of watching a video
+  // After 60 seconds of watching a video
   function showVideoNudge(opts) {
     var title = opts.title || 'this';
     var key = 'fz_vid_' + title;
