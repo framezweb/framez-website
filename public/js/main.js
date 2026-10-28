@@ -17,75 +17,68 @@ document.addEventListener('DOMContentLoaded', function () {
 // column, so there are never leftover gaps like CSS columns/flex leave.
 function layoutMasonry(container) {
   if (!container) return;
-  var items = Array.prototype.slice.call(container.children);
-  if (!items.length) return;
-  var gap = 8;
-  var resizeTimer;
 
-  function getColumnCount() {
-    var w = window.innerWidth;
-    if (w <= 480) return 1;
-    if (w <= 760) return 2;
-    return 3;
-  }
+  // Set up once per container: one resize listener, one layout function.
+  if (!container._ml) {
+    var gap = 8, raf = 0, resizeTimer;
+    var getColumnCount = function () {
+      var w = window.innerWidth;
+      if (w <= 480) return 1;
+      if (w <= 760) return 2;
+      return 3;
+    };
+    // Always reads the CURRENT children, so photos added by "Load more" are included.
+    var run = function () {
+      var items = Array.prototype.slice.call(container.children);
+      if (!items.length) return;
+      var cols = getColumnCount();
+      var containerWidth = container.clientWidth;
+      var colWidth = (containerWidth - gap * (cols - 1)) / cols;
+      var colHeights = new Array(cols).fill(0);
 
-  function run() {
-    var cols = getColumnCount();
-    var containerWidth = container.clientWidth;
-    var colWidth = (containerWidth - gap * (cols - 1)) / cols;
-    var colHeights = new Array(cols).fill(0);
+      items.forEach(function (item) {
+        item.style.position = 'absolute';
+        item.style.width = colWidth + 'px';
 
-    items.forEach(function (item) {
-      item.style.position = 'absolute';
-      item.style.width = colWidth + 'px';
+        var shortest = 0;
+        for (var i = 1; i < cols; i++) {
+          if (colHeights[i] < colHeights[shortest]) shortest = i;
+        }
+        item.style.left = (shortest * (colWidth + gap)) + 'px';
+        item.style.top = colHeights[shortest] + 'px';
+        colHeights[shortest] += item.offsetHeight + gap;
+      });
 
-      var shortest = 0;
-      for (var i = 1; i < cols; i++) {
-        if (colHeights[i] < colHeights[shortest]) shortest = i;
+      container.style.position = 'relative';
+      container.style.height = Math.max.apply(null, colHeights) + 'px';
+    };
+    container._ml = {
+      run: run,
+      // Re-layout (at most once per frame) every time a photo finishes loading
+      schedule: function () {
+        if (raf) return;
+        raf = requestAnimationFrame(function () { raf = 0; run(); });
       }
-      var x = shortest * (colWidth + gap);
-      var y = colHeights[shortest];
-      item.style.left = x + 'px';
-      item.style.top = y + 'px';
-      colHeights[shortest] += item.offsetHeight + gap;
+    };
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(run, 150);
     });
-
-    container.style.position = 'relative';
-    container.style.height = Math.max.apply(null, colHeights) + 'px';
   }
 
+  var ml = container._ml;
   var imgs = container.querySelectorAll('img');
-  var total = imgs.length;
-  var loaded = 0;
-
-  if (total === 0) {
-    run();
-  } else {
-    imgs.forEach(function (img) {
-      if (img.complete) {
-        loaded++;
-      } else {
-        img.addEventListener('load', check);
-        img.addEventListener('error', check);
-      }
-    });
-    if (loaded === total) run();
+  for (var i = 0; i < imgs.length; i++) {
+    var img = imgs[i];
+    if (img._mlBound) continue;
+    img._mlBound = true;
+    if (!img.complete) {
+      img.addEventListener('load', ml.schedule);
+      img.addEventListener('error', ml.schedule);
+    }
   }
-
-  function check() {
-    loaded++;
-    if (loaded === total) run();
-  }
-
-  // Remove the previous resize listener for this container (the album page
-  // re-runs the layout when switching tabs), so they don't pile up.
-  if (container._masonryResize) window.removeEventListener('resize', container._masonryResize);
-  var onResize = function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(run, 150);
-  };
-  container._masonryResize = onResize;
-  window.addEventListener('resize', onResize);
+  // Place everything right away; positions are corrected as photos load.
+  ml.run();
 }
 window.layoutMasonry = layoutMasonry;
 
@@ -174,6 +167,53 @@ window.layoutMasonry = layoutMasonry;
     reveal(overlay);
   }
 
+  // BIG pop-up: when a video finishes playing
+  function showVideoEnd(opts) {
+    var title = opts.title || 'this';
+    var key = 'fz_vend_' + title;
+    if (seen(key) || document.querySelector('.fz-overlay')) return;
+    mark(key);
+
+    // If the small "enjoyed the video?" box is still open, the big one replaces it
+    var smallOpen = document.querySelector('.fz-small');
+    if (smallOpen) removeLater(smallOpen);
+
+    var overlay = el('div', 'fz-overlay');
+    var card = el('div', 'fz-card');
+    function close() { removeLater(overlay); }
+
+    if (opts.cover) {
+      var img = el('img', 'fz-img');
+      img.src = opts.cover;
+      img.alt = '';
+      card.appendChild(img);
+    }
+    card.appendChild(closeButton(close));
+
+    var body = el('div', 'fz-body');
+    body.appendChild(el('h3', '', 'Thanks for watching! \uD83C\uDFAC'));
+    body.appendChild(el('p', '', 'We make highlight videos for events, school events, birthdays and more.'));
+
+    var offer = el('div', 'fz-offer');
+    offer.appendChild(document.createTextNode('Mention the '));
+    offer.appendChild(el('b', '', title));
+    offer.appendChild(document.createTextNode(' video and get '));
+    offer.appendChild(el('b', '', '5% off'));
+    offer.appendChild(document.createTextNode(' your next event.'));
+    body.appendChild(offer);
+    body.appendChild(el('p', 'fz-note', 'Offer valid for 30 days.'));
+
+    body.appendChild(waButton('Hi Framez! I watched the ' + title + ' video and I\u2019d like to claim the 5% offer.'));
+    card.appendChild(body);
+
+    overlay.appendChild(card);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', function onKey(e) {
+      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+    });
+    reveal(overlay);
+  }
+
   // SMALL pop-up (slides up from the bottom)
   function smallBox(heading, buttonMessage) {
     var box = el('div', 'fz-small');
@@ -207,7 +247,8 @@ window.layoutMasonry = layoutMasonry;
   window.framezPopups = {
     showDownload: showDownload,
     showAlbumNudge: showAlbumNudge,
-    showVideoNudge: showVideoNudge
+    showVideoNudge: showVideoNudge,
+    showVideoEnd: showVideoEnd
   };
 })();
 
