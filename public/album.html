@@ -160,9 +160,17 @@
   var photos = [];
   var albumName = '';
   var albumCover = null;
-  var viewedIds = {};
-  var viewedCount = 0;
   var nudgePending = false;
+  // "Have an event?" box: shows after 60 seconds on the album page
+  // (waits until the full-screen photo viewer is closed, so it never covers a photo)
+  var NUDGE_AFTER_MS = 60000;
+  setTimeout(function () {
+    nudgePending = true;
+    if (!vOpen && window.framezPopups) {
+      nudgePending = false;
+      framezPopups.showAlbumNudge({ title: albumName });
+    }
+  }, NUDGE_AFTER_MS);
   var favs = [];
   var currentTab = 'all';
   var storeKey = 'framez_fav_' + albumId;
@@ -221,7 +229,7 @@
     var img = document.createElement('img');
     img.src = p.thumb;
     img.alt = p.name;
-    img.loading = 'lazy';
+    img.loading = 'eager';
     img.addEventListener('click', function () { openViewer(idx); });
 
     var heart = document.createElement('button');
@@ -285,11 +293,22 @@
 
   /* ---------- Pop-ups ---------- */
   // Big "thanks for downloading" pop-up (shows once per visit)
-  function afterDownload() {
-    setTimeout(function () {
-      if (window.framezPopups) framezPopups.showDownload({ title: albumName, cover: albumCover });
-    }, 900);
+  // On iPhone, a download opens a new tab and this page pauses in the background,
+  // so the pop-up also waits for the visitor to come back to this page.
+  var dlPending = false;
+  function flushDownload() {
+    if (!dlPending || document.hidden) return;
+    dlPending = false;
+    if (window.framezPopups) framezPopups.showDownload({ title: albumName, cover: albumCover });
   }
+  function afterDownload() {
+    dlPending = true;
+    setTimeout(flushDownload, 900);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) setTimeout(flushDownload, 700);
+  });
+  window.addEventListener('pageshow', function () { setTimeout(flushDownload, 700); });
   dlAllBtn.addEventListener('click', afterDownload);
   menuAll.addEventListener('click', afterDownload);
 
@@ -345,11 +364,6 @@
   function showViewerPhoto() {
     var p = vList[vIndex];
     if (!p) return;
-    if (!viewedIds[p.id]) {
-      viewedIds[p.id] = true;
-      viewedCount++;
-      if (viewedCount >= 12) nudgePending = true;
-    }
     vImg.src = p.large;
     vImg.alt = p.name;
     vCount.textContent = (vIndex + 1) + ' / ' + vList.length;
@@ -466,7 +480,7 @@
       gateEl.style.display = 'none';
       titleEl.textContent = data.title || 'Album';
       albumName = data.title || 'Album';
-      albumCover = data.cover || data.banner || null;
+      albumCover = data.banner || data.cover || null;
       if (data.banner) heroEl.style.backgroundImage = 'linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.45)), url(' + data.banner + ')';
       if (data.date) { dateEl.textContent = data.date; dateEl.style.display = 'block'; }
 

@@ -11,6 +11,9 @@
   .video-list{display:flex; flex-direction:column; gap:32px; margin-top:40px;}
   .video-item iframe{width:100%; aspect-ratio:16/9; border:1px solid var(--line);}
   .video-item h4{font-family:'Playfair Display', serif; font-size:18px; margin-top:12px; font-weight:500;}
+  .book-cta{text-align:center; padding:30px 12px 6px; max-width:560px; margin:0 auto;}
+  .book-cta p{font-family:'Playfair Display', serif; font-size:19px; line-height:1.5; margin-bottom:18px;}
+  .book-cta .btn{display:inline-flex; align-items:center; justify-content:center;}
 </style>
 </head>
 <body>
@@ -93,6 +96,17 @@
       if (window.framezPopups) framezPopups.showVideoNudge({ title: title });
     }
     function onState(e) {
+      if (e.data === 0) {                       // video ended: big pop-up
+        if (timer) { clearInterval(timer); timer = null; }
+        var vTitle = title, vCover = null;
+        try {
+          vTitle = e.target.getIframe().title || title;
+          var vid = e.target.getVideoData && e.target.getVideoData().video_id;
+          if (vid) vCover = 'https://i.ytimg.com/vi/' + vid + '/hqdefault.jpg';
+        } catch (err) {}
+        if (window.framezPopups) framezPopups.showVideoEnd({ title: vTitle, cover: vCover });
+        return;
+      }
       if (e.data === 1) {                       // playing
         if (!timer) timer = setInterval(function () {
           playing++;
@@ -154,6 +168,12 @@
           '<div class="video-item">' +
             '<iframe src="' + escapeHtml(src) + '" title="' + escapeHtml(v.title || '') + '" allowfullscreen></iframe>' +
             (v.title ? '<h4>' + escapeHtml(v.title) + '</h4>' : '') +
+            '<div class="book-cta">' +
+              '<p>Your event deserves a story like this. Let us turn your best moments into a video you\u2019ll watch again and again.</p>' +
+              '<a class="btn btn-solid" target="_blank" rel="noopener" href="' +
+                escapeHtml('https://wa.me/94769644887?text=' + encodeURIComponent('Hi Framez! I watched the ' + (v.title || data.title || 'highlight') + ' video and I\u2019d like to book videography for my event.')) +
+              '">Book Videography</a>' +
+            '</div>' +
           '</div>'
         );
       }).join('');
