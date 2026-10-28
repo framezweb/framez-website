@@ -396,3 +396,52 @@ footer.site{
 .lock-phone{color:var(--fg); border-bottom:1px solid var(--fg); white-space:nowrap;}
 .lock-wa{display:inline-flex; align-items:center; gap:8px; padding:10px 18px; font-size:13px;}
 .lock-wa svg{width:17px; height:17px; fill:currentColor;}
+
+
+/* ===== FRAMEZ POP-UPS (download thank-you, album nudge, video nudge) ===== */
+.fz-overlay{
+  position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.62);
+  display:flex; align-items:center; justify-content:center; padding:18px;
+  opacity:0; pointer-events:none; transition:opacity .3s ease;
+}
+.fz-overlay.show{opacity:1; pointer-events:auto;}
+.fz-card{
+  position:relative; width:min(100%, 400px); max-height:92vh; overflow:auto;
+  background:var(--bg); color:var(--fg); border:1px solid var(--line);
+  border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,0.35);
+  transform:translateY(16px) scale(.98); transition:transform .3s ease;
+}
+.fz-overlay.show .fz-card{transform:none;}
+.fz-img{width:100%; aspect-ratio:16/10; object-fit:cover; background:var(--bg-alt);}
+.fz-body{padding:22px 22px 24px;}
+.fz-body h3{font-family:'Playfair Display', serif; font-weight:500; font-size:23px; margin-bottom:8px;}
+.fz-body p{font-size:14.5px; color:var(--muted); margin-bottom:14px;}
+.fz-offer{
+  border:1px dashed var(--fg); border-radius:10px; padding:12px 14px;
+  font-size:14.5px; margin-bottom:6px; color:var(--fg);
+}
+.fz-offer b{font-weight:600;}
+.fz-note{font-size:12.5px !important; margin:0 0 16px !important;}
+.fz-video{font-size:14.5px; color:var(--fg) !important; margin:14px 0 18px !important;}
+.fz-wa{display:flex; justify-content:center; align-items:center; gap:8px; width:100%; padding:13px 18px; font-size:14px; cursor:pointer;}
+.fz-wa svg{width:18px; height:18px; fill:currentColor;}
+.fz-x{
+  position:absolute; top:10px; right:10px; z-index:2; width:38px; height:38px;
+  border-radius:50%; border:1px solid var(--line); background:var(--bg); color:var(--fg);
+  font-size:24px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,0.25);
+}
+.fz-x:hover{background:var(--fg); color:var(--bg);}
+
+/* small slide-up box */
+.fz-small{
+  position:fixed; left:50%; bottom:18px; z-index:300;
+  width:min(92vw, 390px); transform:translateX(-50%) translateY(24px);
+  background:var(--bg); color:var(--fg); border:1px solid var(--line);
+  border-radius:14px; padding:16px 54px 16px 18px;
+  box-shadow:0 10px 34px rgba(0,0,0,0.3);
+  opacity:0; pointer-events:none; transition:opacity .3s ease, transform .35s ease;
+}
+.fz-small.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0);}
+.fz-small h4{font-family:'Playfair Display', serif; font-weight:500; font-size:18px; margin-bottom:10px;}
+.fz-small .fz-wa{padding:10px 16px; font-size:13px; width:auto; display:inline-flex;}
