@@ -21,13 +21,19 @@ Inside each photo album subfolder, add a plain text file named exactly `_meta.js
 {
   "title": "Perera Wedding",
   "locked": true,
-  "password": "silverbells24"
+  "password": "silverbells24",
+  "cover": "IMG_014.jpg",
+  "banner": "IMG_002.jpg",
+  "date": "16-08-2026"
 }
 ```
 
 - `locked: false` (or no `_meta.json` at all) makes it public.
 - The password is only ever checked on the server — it's never sent to the browser unless it's correct.
 - Just drop your photos into the same folder. They'll appear automatically, sorted by filename.
+- `cover` is optional — set it to the exact filename (including extension, case-sensitive) of the photo inside that same folder you want shown as the album's thumbnail on the gallery page. Leave it out and the first photo alphabetically is used automatically, same as before.
+- `banner` is optional — the exact filename of a wide/horizontal photo from that same folder to show full-width at the top of the album page itself, with the title and date over it. Leave it out and it'll use `cover` instead, or the first photo alphabetically if neither is set.
+- `date` is optional — any text you want shown under the title on that banner (e.g. `"16-08-2026"`). Leave it out and no date line will show.
 
 ## 3. Video album folder — `_meta.json`
 
@@ -46,6 +52,33 @@ Video albums don't hold video files in Drive (Drive isn't built for streaming to
 
 To get an embed URL: on the YouTube video, click Share > Embed, and copy the URL inside `src="..."`.
 
+## 3b. Portfolio folder
+
+The Portfolio page is grouped into five categories, shown as plain photo grids — no albums, no locking, no password. Create a top-level folder called "Framez Portfolio," share it with the service account, then create five subfolders inside it, named **exactly**:
+
+- Events
+- School Events
+- Birthday
+- Graduation
+- Portraits
+
+Drop around ten of your best photos into each subfolder. The page pulls all five automatically and shows them in that order; a category with no folder (or no photos yet) is simply skipped.
+
+## 3c. Hero background video (optional)
+
+The homepage hero supports a looping background video. When you have a short clip ready (10–20 seconds, kept small so it loads fast), upload it into the repo at `public/assets/hero.mp4` — same "Add file → Upload files" flow you've used for everything else. The homepage checks for it automatically: if it's there, it plays behind the hero text with a dark overlay for readability; if it's missing, the hero just shows the plain background, so there's nothing to break by leaving it out for now.
+
+## 3d. "What We Shoot" photos
+
+The four cards on the homepage (Events / Birthday / Graduations / Portrait sessions) each show their own photo. Upload four images into the repo at `public/assets/`, using these exact file names so each one lands in the right card:
+
+- `shoot-events.jpg` — Events card
+- `shoot-birthday.jpg` — Birthday card
+- `shoot-graduations.jpg` — Graduations card
+- `shoot-portraits.jpg` — Portrait sessions card
+
+Same "Add file → Upload files" flow as everything else — just make sure the file names match exactly (all lowercase, with the dashes). Until a photo is uploaded, that card just shows an empty grey box where the photo goes, so nothing breaks if you add them one at a time.
+
 ## 4. Environment variables (set in Netlify: Site configuration > Environment variables)
 
 | Variable | Value |
@@ -53,6 +86,8 @@ To get an embed URL: on the YouTube video, click Share > Embed, and copy the URL
 | `GOOGLE_SERVICE_ACCOUNT_KEY` | The entire contents of the JSON key file you downloaded |
 | `ALBUMS_ROOT_FOLDER_ID` | The folder ID of "Framez Albums" (the string after `/folders/` in its Drive URL) |
 | `VIDEOS_ROOT_FOLDER_ID` | The folder ID of "Framez Videos" |
+| `PORTFOLIO_FOLDER_ID` | The folder ID of "Framez Portfolio" |
+| `PORTFOLIO_FOLDER_ID` | The folder ID of "Framez Portfolio" |
 
 ## 5. Deploying
 
@@ -68,3 +103,11 @@ To get an embed URL: on the YouTube video, click Share > Embed, and copy the URL
 2. Add a `_meta.json` with a title, and a password if you want it locked
 3. Upload the photos (or list video embed links)
 4. It appears on the live site within about a minute — no redeploy needed
+
+## Security notes
+
+- Secrets live only in Netlify environment variables (`GOOGLE_SERVICE_ACCOUNT_KEY`, `ADMIN_PASSWORD`, the folder IDs). Never put them in files in this repo.
+- Use a long admin password (a phrase of 4+ random words). Give every locked album its own password — never reuse one.
+- Wrong album passwords are limited to 8 tries per 15 minutes per visitor; wrong admin passwords lock out after 5 tries for 30 minutes.
+- Security headers (including the Content-Security-Policy) are set in `netlify.toml`. If a new embed or script stops working after a change, the CSP line there is the first place to check.
+- Run `npm audit` and `npm outdated` once a month, and update `googleapis` / `@netlify/blobs` when Netlify's build log suggests it.
