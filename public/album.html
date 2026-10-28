@@ -293,11 +293,12 @@
 
   /* ---------- Pop-ups ---------- */
   // Big "thanks for downloading" pop-up (shows once per visit)
-  // On iPhone, a download opens a new tab and this page pauses in the background,
-  // so the pop-up also waits for the visitor to come back to this page.
+  // The pop-up shows about 1 second after the tap, even if Safari is showing its own
+  // View/Download menu. If the page was paused in the background (iPhone opens a new
+  // tab for "View"), it shows as soon as the visitor comes back.
   var dlPending = false;
   function flushDownload() {
-    if (!dlPending || document.hidden) return;
+    if (!dlPending) return;
     dlPending = false;
     if (window.framezPopups) framezPopups.showDownload({ title: albumName, cover: albumCover });
   }

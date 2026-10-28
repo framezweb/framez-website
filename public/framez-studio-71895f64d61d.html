@@ -16,7 +16,7 @@ textarea{min-height:90px}label{display:block;font-size:12.5px;color:#555;margin:
 .info{background:#fff8e1;padding:10px;border-radius:8px;font-size:13px;margin-bottom:12px;white-space:pre-wrap}
 #sheetBar{position:sticky;top:0;background:#f3f4f6;padding:10px 14px;z-index:5}
 #sheetWrap{width:794px;margin:0 auto}
-#sheet{width:794px;min-height:1100px;background:#fff;padding:34px 56px 26px;position:relative;font-size:14px;color:#000}
+#sheet{width:794px;min-height:1123px;background:#fff;padding:34px 56px 64px;position:relative;font-size:14px;color:#000}
 .hd{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:9px solid #5b8fd9;padding-bottom:12px}
 .hd b{color:#5b8fd9;font-size:19px}.hd img{height:46px}.ttl{text-align:center;color:#4a86d6;font-size:25px;font-weight:bold;margin:26px 0 6px}
 .meta{width:320px;margin-left:auto;margin-bottom:14px}.meta div{display:flex;padding-right:12px}.meta span:first-child{flex:1}.meta span:last-child{width:170px;flex:none}
@@ -154,7 +154,7 @@ function sheet(d,inv){lastSheet={d:d,inv:inv};var f=d.forLines,rows='',w=(d.titl
  '<div class="two"><div><div class="bar">Prepared for:</div>'+(d.clientOn&&d.client?'<b>'+esc(d.client)+'</b><br>':'')+f.filter(Boolean).map(esc).join('<br>')+'</div><div><div class="bar">Prepared by:</div>Methuja Devvin<br>'+longD(d.prep)+'</div></div>'+
  '<div class="tbl"><div class="th"><span>Description</span><span class="pr" style="font-size:14px">Price</span></div>'+rows+'</div>'+tot+
  '<div class="note"><b>NOTE:</b>'+li(d.notes)+'</div><div class="terms">'+(inv?'<img class="seal" src="/assets/paid-seal.png" alt="">':'')+'<h3>Terms &amp; Conditions</h3>'+li(d.terms)+'</div>'+
- '<div class="bank"><b>Bank Details:</b> M.D.L Geeganage<br>Account Number – 8017827504 (Commercial Bank, Kottawa)'+(inv?'<img class="sg" src="'+SIG+'" alt="">':'')+'<div class="ty" style="position:absolute;left:0;right:0;bottom:0">Thank You!</div></div>';
+ '<div class="bank"><b>Bank Details:</b> M.D.L Geeganage<br>Account Number – 8017827504 (Commercial Bank, Kottawa)'+(inv?'<img class="sg" src="'+SIG+'" alt="">':'')+'</div><div class="ty" style="position:absolute;left:0;right:0;bottom:22px">Thank You!</div>';
  document.title=(inv?'Invoice ':'Quote ')+d.number;show('sheetView');fit()}
 function fit(){var z=Math.min(1,(window.innerWidth-8)/794);$('sheetWrap').style.zoom=z}
 window.onresize=fit;
