@@ -259,3 +259,88 @@ function escapeHtml(s) {
   });
 }
 window.escapeHtml = escapeHtml;
+
+/* =========================================================
+   MOTION (added Oct 2026): hero reveal, scroll fade-ups,
+   card wave, header shrink, heart pop.
+   ========================================================= */
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 10: header shrink (works even with reduced motion, it's not an animation of content)
+  var header = document.querySelector('header.site');
+  if (header) {
+    var onScroll = function () { header.classList.toggle('fz-scrolled', window.scrollY > 40); };
+    window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  }
+
+  // 11: heart pop (any heart button, including ones added later)
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.heart-btn');
+    if (!b || reduce) return;
+    b.classList.remove('fz-pop'); void b.offsetWidth; b.classList.add('fz-pop');
+    setTimeout(function () { b.classList.remove('fz-pop'); }, 500);
+  }, true);
+
+  if (reduce || !('IntersectionObserver' in window)) return;
+  window.__fzReady = true;
+  document.documentElement.classList.add('fz-motion');
+
+  // 1 + 2: split the page headline into words and reveal
+  var hero = document.querySelector('.hero');
+  if (hero) {
+    var h1 = hero.querySelector('h1');
+    var count = 0;
+    if (h1) {
+      (function split(node) {
+        Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+          if (n.nodeType === 3) {
+            var parts = n.textContent.split(/(\s+)/), frag = document.createDocumentFragment();
+            parts.forEach(function (p) {
+              if (!p) return;
+              if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(p)); return; }
+              var s = document.createElement('span'); s.className = 'fz-w'; s.textContent = p;
+              s.style.transitionDelay = (0.15 + count * 0.07) + 's'; count++;
+              frag.appendChild(s);
+            });
+            node.replaceChild(frag, n);
+          } else if (n.nodeType === 1) split(n);
+        });
+      })(h1);
+    }
+    var after = 0.15 + count * 0.07 + 0.25;
+    hero.style.setProperty('--fz-d2', after + 's');
+    hero.style.setProperty('--fz-d3', (after + 0.2) + 's');
+    void hero.offsetWidth; getComputedStyle(hero.querySelector('.eyebrow') || hero).opacity;
+    setTimeout(function () { hero.classList.add('fz-in'); }, 80);
+  }
+
+  // 4 + 5: fade-up on scroll; cards in the same grid come in as a wave
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('fz-show'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+  var SEL = 'section:not(.hero) h2, section:not(.hero) .kicker, .section-head > .btn, ' +
+            'section:not(.hero) .wrap > p, .shoot-card, .card, .album-tile, form, .contact-info, footer.site';
+  function prep(root) {
+    var list = (root.matches && root.matches(SEL)) ? [root] : [];
+    list = list.concat(Array.prototype.slice.call(root.querySelectorAll ? root.querySelectorAll(SEL) : []));
+    list.forEach(function (el) {
+      if (el.classList.contains('fz-r') || el.closest('.hero') || el.closest('.photo-grid')) return;
+      if (el.classList.contains('album-tile') || el.classList.contains('shoot-card') || el.classList.contains('card')) {
+        var sibs = Array.prototype.filter.call(el.parentNode.children, function (c) { return c.tagName === el.tagName; });
+        var cols = Math.max(1, Math.round(el.parentNode.clientWidth / Math.max(1, el.clientWidth || 1)));
+        el.style.setProperty('--fz-delay', ((sibs.indexOf(el) % Math.min(cols, 4)) * 0.1) + 's');
+      }
+      el.classList.add('fz-r');
+      io.observe(el);
+    });
+  }
+  prep(document.body);
+  // album/video cards are loaded later from Drive, so watch for them
+  new MutationObserver(function (muts) {
+    muts.forEach(function (m) { m.addedNodes.forEach(function (n) { if (n.nodeType === 1) prep(n); }); });
+  }).observe(document.body, { childList: true, subtree: true });
+})();
