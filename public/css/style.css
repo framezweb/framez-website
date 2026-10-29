@@ -445,3 +445,64 @@ footer.site{
 .fz-small.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0);}
 .fz-small h4{font-family:'Playfair Display', serif; font-weight:500; font-size:18px; margin-bottom:10px;}
 .fz-small .fz-wa{padding:10px 16px; font-size:13px; width:auto; display:inline-flex;}
+
+/* =========================================================
+   MOTION (added Oct 2026)
+   Hidden states only apply when JS adds .fz-motion to <html>,
+   so content always shows if the script does not run.
+   ========================================================= */
+/* 1 + 2: hero headline words + hero text/buttons */
+.hero .hero-sub{opacity:.9;}
+.fz-motion .hero h1 .fz-w{display:inline-block; opacity:0; transform:translateY(0.55em); filter:blur(6px);
+  transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1), filter .7s ease;}
+.fz-motion .hero.fz-in h1 .fz-w{opacity:1; transform:none; filter:none;}
+.fz-motion .hero .eyebrow,
+.fz-motion .hero h1 + p,
+.fz-motion .hero .hero-sub,
+.fz-motion .hero .actions .btn{opacity:0; transform:translateY(18px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);}
+.fz-motion .hero.fz-in .eyebrow{opacity:1; transform:none; transition-delay:.05s;}
+.fz-motion .hero.fz-in h1 + p,
+.fz-motion .hero.fz-in .hero-sub{opacity:.9; transform:none; transition-delay:var(--fz-d2,.7s);}
+.fz-motion .hero.fz-in .actions .btn{opacity:1; transform:none; transition-delay:var(--fz-d3,.9s);}
+.fz-motion .hero.fz-in .actions .btn + .btn{transition-delay:calc(var(--fz-d3,.9s) + .12s);}
+.fz-motion .hero.fz-in .actions .btn:hover{transition-delay:0s;}
+
+/* 4 + 5: fade-up on scroll, cards in a wave */
+.fz-motion .fz-r{opacity:0; transform:translateY(28px);
+  transition:opacity .75s ease, transform .85s cubic-bezier(.2,.7,.2,1); transition-delay:var(--fz-delay,0s);}
+.fz-motion .fz-r.fz-show{opacity:1; transform:none;}
+
+/* 7: album cover hover zoom + title slide (mouse only) */
+.album-thumb img, .shoot-photo{transition:transform .7s cubic-bezier(.2,.7,.2,1);}
+.album-meta h4{transition:transform .4s ease;}
+@media (hover:hover){
+  .album-tile:hover .album-thumb img{transform:scale(1.06);}
+  .album-tile:hover .album-meta h4{transform:translateY(-4px);}
+  .shoot-card:hover .shoot-photo{transform:scale(1.04);}
+}
+.shoot-card{overflow:hidden;}
+
+/* 8: button shine on hover */
+.btn{position:relative; overflow:hidden;}
+.btn::after{content:""; position:absolute; top:0; bottom:0; left:-80%; width:50%; pointer-events:none;
+  background:linear-gradient(105deg, transparent, rgba(150,150,150,.35), transparent); transform:skewX(-20deg);}
+@media (hover:hover){ .btn:hover::after{left:130%; transition:left .7s ease;} }
+
+/* 10: header shrinks on scroll */
+nav.bar, .logo-img{transition:height .35s ease;}
+header.site{transition:box-shadow .35s ease, background .35s ease;}
+header.site.fz-scrolled nav.bar{height:58px;}
+header.site.fz-scrolled .logo-img{height:28px;}
+header.site.fz-scrolled{box-shadow:0 8px 24px rgba(0,0,0,.18);}
+
+/* 11: heart pop */
+@keyframes fzPop{0%{transform:scale(1);}35%{transform:scale(1.35);}60%{transform:scale(.9);}100%{transform:scale(1);}}
+.heart-btn.fz-pop svg{animation:fzPop .45s ease;}
+
+/* Respect "Reduce Motion" */
+@media (prefers-reduced-motion: reduce){
+  .fz-motion .fz-r, .fz-motion .hero *{opacity:1 !important; transform:none !important; filter:none !important; transition:none !important;}
+  .btn::after{display:none;}
+  .heart-btn.fz-pop svg{animation:none;}
+}
