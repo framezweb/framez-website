@@ -63,7 +63,13 @@ exports.handler = async function (event) {
     } while (pageToken);
 
     const pwPart = suppliedPassword ? '&password=' + encodeURIComponent(suppliedPassword) : '';
-    const photos = allFiles.map((f) => ({
+    // Hide the cover photo from the album grid. It still shows as the album
+    // cover and banner — it just isn't repeated inside the photos.
+    // Only hidden when _meta.json names a cover file.
+    const coverFileId = findByName(allFiles, meta.cover);
+    const gridFiles = coverFileId ? allFiles.filter((f) => f.id !== coverFileId) : allFiles;
+
+    const photos = gridFiles.map((f) => ({
       id: f.id,
       name: f.name,
       thumb: '/api/image?id=' + f.id + '&w=400&album=' + encodeURIComponent(albumId) + pwPart,
